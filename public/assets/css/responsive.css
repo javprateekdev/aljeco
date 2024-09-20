@@ -1,0 +1,30 @@
+@media (max-width:767px){
+    .tp-header-search-2 input {
+        height: 45px !important;
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        min-width: 180px !important;
+    }
+    .tp-banner-title-2 {
+        font-size: 20px !important;
+    }
+    .tp-btn-border-sm {
+        padding: 5px 10px !important;
+    }
+    .tp-btn {
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width:575px){
+    /* .tp-banner-item-2 {
+        min-height: 215px !important;
+        padding: 40px 20px !important;
+    } */
+}
+
+@media only screen and (min-width: 576px) and (max-width: 767px), (max-width: 575px) {
+    .tp-slider-content-2 {
+      padding-top: 45px;
+    }
+  }
