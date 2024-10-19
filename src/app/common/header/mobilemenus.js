@@ -27,7 +27,7 @@ const MobileMenus = () => {
                 <Offcanvas.Header closeButton>
                     <Offcanvas.Title>
                     <Link className='d-flex align-items-center gap-2' href="/">
-                        <img  src="/assets/img/logo/logo.png"  alt="logo" width={45}  height={45} /> 
+                        <img  src="/assets/img/logo/logo.png"  alt="logo" width={55}  height={55} /> 
                         <span><strong>Aljeco</strong> </span>
                     </Link>
                     </Offcanvas.Title>
