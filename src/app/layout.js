@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <Head>
-        <link rel="icon" href="/assets/img/logo/logo.png" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <body className={inter.className}>
         <WishListProvider>
