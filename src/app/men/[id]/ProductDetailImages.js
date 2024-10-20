@@ -15,7 +15,6 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 // ];
 
 const ProductDetailImages = ({ images }) => {
-  console.log("images", images);
   return (
     <>
       <div className="d-none d-md-block">

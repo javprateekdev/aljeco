@@ -5,7 +5,7 @@ import { BiPlus, BiMinus } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { apiUrl } from "../api";
-import { CartContext } from "../../context/cartContext";
+import { CartContext } from "../../context/CartContext";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../utils/loader";
@@ -17,9 +17,12 @@ const Cart = () => {
   const [couponCode, setCouponCode] = useState("");
   const [message, setMessage] = useState("");
   const [discountDetails, setDiscountDetails] = useState(null);
-
+  const [token, setToken] = useState("");
   const router = useRouter();
-  const token = localStorage.getItem("token");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
 
   const handleCouponCodeChange = (event) => {
     setCouponCode(event.target.value);
@@ -139,13 +142,15 @@ const Cart = () => {
   };
 
   const calculateTotalPrice = () => {
-    const subtotal = cartItems.reduce(
-      (total, item) => total + item.productItem.salePrice * item.quantity,
-      0
-    );
+    const subtotal =
+      cartItems &&
+      cartItems.reduce(
+        (total, item) => total + item.productItem.salePrice * item.quantity,
+        0
+      );
 
     if (discountDetails) {
-      if (discountDetails.discountType === 'PERCENTAGE') {
+      if (discountDetails.discountType === "PERCENTAGE") {
         return subtotal - (subtotal * discountDetails.discountValue) / 100;
       } else if (discountDetails.discountType === "FIXED") {
         return Math.max(0, subtotal - discountDetails.discountValue);
@@ -162,7 +167,7 @@ const Cart = () => {
     );
 
     if (discountDetails) {
-      if (discountDetails.discountType === 'PERCENTAGE') {
+      if (discountDetails.discountType === "PERCENTAGE") {
         return (subtotal * discountDetails.discountValue) / 100;
       } else if (discountDetails.discountType === "FIXED") {
         return discountDetails.discountValue;
@@ -177,7 +182,7 @@ const Cart = () => {
     } else {
       fetchCart();
     }
-  }, [token]);
+  }, [token, fetchCart, router]);
 
   if (loading) return <Loader />;
 
@@ -269,7 +274,6 @@ const Cart = () => {
                   </tbody>
                 </table>
               </div>
-              
             </div>
             <div className="col-xl-3 col-lg-4 col-md-6">
               <div className="tp-cart-checkout-wrapper position-sticky t-10">

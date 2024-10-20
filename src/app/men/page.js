@@ -4,7 +4,6 @@ import ShopContent from "./shopcontent";
 import Link from "next/link";
 import axios from "axios";
 import { apiUrl } from "../api";
-import { useFilter } from "@/context/FilterContext";
 import Loader from "../utils/loader";
 export default function Page() {
   const [count, setCount] = useState(0);

@@ -1,1 +1,1 @@
-export const apiUrl = "http://localhost:9001";
+export const apiUrl = "https://api.aljeco.in";

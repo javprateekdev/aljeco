@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { WishListContext } from "../../context/WishListContext";
-import { CartContext } from "../../context/cartContext"; // Add CartContext to add items to the cart
+import { CartContext } from "../../context/CartContext"; // Add CartContext to add items to the cart
 import { BiPlus, BiMinus } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { toast, Bounce } from "react-toastify";
@@ -18,8 +18,14 @@ const Wishlist = () => {
   const [loading, setLoading] = useState(false);
   const [quantities, setQuantities] = useState({}); // Track item quantities
 
+  const[token, setToken] =useState('')
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
+  
   const deleteWishListItem = async (id) => {
-    console.log("delete");
+  
     const token = localStorage.getItem("token");
     try {
       setLoading(true);
@@ -94,7 +100,7 @@ const Wishlist = () => {
       router.push("/authentication/login");
     }
     fetchWishlist();
-  }, []);
+  }, [fetchWishlist]);
 
   if (loading) return <Loader />;
 

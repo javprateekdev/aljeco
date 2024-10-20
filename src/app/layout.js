@@ -3,7 +3,7 @@ import Header from "./common/header/page";
 import Footer from "./common/footer/Footer";
 import Head from "next/head";
 import { FilterProvider } from "../context/FilterContext";
-import { CartProvider } from "../context/cartContext";
+import { CartProvider } from "../context/CartContext";
 import { WishListProvider } from "../context/WishListContext";
 import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS

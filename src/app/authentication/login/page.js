@@ -10,10 +10,8 @@ import { useRouter } from "next/navigation";
 import { MdLogin } from "react-icons/md";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loader from "@/app/utils/loader";
+import Loader from "../../utils/loader";
 const Login = () => {
- 
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   //   const [rememberMe, setRememberMe] = useState(false);
@@ -35,7 +33,7 @@ const Login = () => {
       // Redirect to dashboard after successful login
       router.push("/"); // Navigate the user to the /dashboard route
     }
-  }, [loggedin]);
+  }, [loggedin, router]);
 
   // Handle login submission
   const handleLogin = async (e) => {
@@ -51,8 +49,11 @@ const Login = () => {
 
       // Assuming the token is returned in response.data.token
       const { token } = response.data;
-      localStorage.setItem("token", token);
-      setLoggedIn(true);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("token", token);
+        setLoggedIn(true);
+      }
+
       // Store token in localStorage if remember me is checked
       // if (rememberMe) {
       //   localStorage.setItem("token", token);

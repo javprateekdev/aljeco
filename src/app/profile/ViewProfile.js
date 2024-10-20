@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import { BiCamera, BiEnvelope, BiPhone } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { toast, Bounce } from "react-toastify";
@@ -6,12 +6,17 @@ import "react-toastify/dist/ReactToastify.css";
 const ViewProfile = () => {
   const router = useRouter();
 
-  const handleLogout = () => {
+  const [token, setToken] = useState("");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
 
-    if (localStorage.getItem("token")) {
+  const handleLogout = () => {
+    if (token) {
       localStorage.removeItem("token");
     }
-    
+
     toast.success("Logout Successfully!", {
       position: "top-right",
       autoClose: 5000,

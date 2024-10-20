@@ -1,6 +1,5 @@
 import React from 'react'
 import { BsGrid } from "react-icons/bs";
-
 import Header from '../common/header/page'
 import ShopContent from './shopcontent'
 import Footer from '../common/footer/Footer';

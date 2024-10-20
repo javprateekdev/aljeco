@@ -1,17 +1,21 @@
 import React, { useContext } from "react";
 import { BsCartDash, BsEye, BsHeart, BsStarFill } from "react-icons/bs";
 import { useRouter } from "next/navigation"; // Use useRouter from next/navigation
-import { CartContext } from "../../context/cartContext";
+import { CartContext } from "../../context/CartContext";
 import { WishListContext } from "@/context/WishListContext";
 
 const ProductContCard = ({ product }) => {
   const { addToCart } = useContext(CartContext);
   const { addToWishList } = useContext(WishListContext);
   const router = useRouter();
-
+  
+  const[token, setToken] =useState('')
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
   // Handle adding product to the cart
   const handleAddToCart = () => {
-    const token = localStorage.getItem("token");
     if (!token) {
       router.push("/authentication/login");
     } else {
@@ -26,7 +30,6 @@ const ProductContCard = ({ product }) => {
 
   // Handle adding product to the wishlist
   const handleAddToWishList = () => {
-    const token = localStorage.getItem("token");
     if (!token) {
       router.push("/authentication/login");
     } else {

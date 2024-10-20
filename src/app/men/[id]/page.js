@@ -18,9 +18,15 @@ const ProductDetails = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const[token, setToken] =useState('')
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
+  
   // Function to add product to cart
   const addToCart = async () => {
-    const token = localStorage.getItem("token"); // Get the user's token from local storage
+   // Get the user's token from local storage
     if (!token) {
       router.push("/authentication/login"); // Redirect to login page if not authenticated
       return;
