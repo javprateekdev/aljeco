@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import React, { useContext, useEffect, useState } from "react";
 import { WishListContext } from "../../context/WishListContext";
 import { CartContext } from "../../context/CartContext"; // Add CartContext to add items to the cart
@@ -11,22 +10,21 @@ import "react-toastify/dist/ReactToastify.css";
 import Loader from "../utils/loader";
 import { apiUrl } from "../api";
 const Wishlist = () => {
-  const { wishListItems, fetchWishlist, updateWishlistItem } =
-    useContext(WishListContext); // Add updateWishlistItem
+  
+  const { wishListItems, fetchWishlist } = useContext(WishListContext);
   const { addToCart } = useContext(CartContext); // Add addToCart for adding items to cart
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [quantities, setQuantities] = useState({}); // Track item quantities
 
-  const[token, setToken] =useState('')
+  const [token, setToken] = useState("");
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     setToken(token);
   }, []);
-  
+
   const deleteWishListItem = async (id) => {
-  
-    const token = localStorage.getItem("token");
     try {
       setLoading(true);
       const response = await axios.delete(`${apiUrl}/wishlist/items/${id}`, {
@@ -56,7 +54,6 @@ const Wishlist = () => {
 
   // Function to handle adding items to cart
   const handleAddToCart = (item) => {
-    const token = localStorage.getItem("token");
     if (!token) {
       router.push("/authentication/login");
     } else {
@@ -95,12 +92,11 @@ const Wishlist = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
       router.push("/authentication/login");
     }
     fetchWishlist();
-  }, [fetchWishlist]);
+  }, [fetchWishlist, token]);
 
   if (loading) return <Loader />;
 
