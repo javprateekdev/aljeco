@@ -268,15 +268,20 @@ const CheckoutPage = () => {
                           checked={selectedAddress === address.id}
                           onChange={() => setSelectedAddress(address.id)}
                         />
-                        <span className="custom-radio"></span>
+                        {/* <span className="custom-radio"></span> */}
                         <div className="address-details">
-                          <div className="name">
-                            <span>{`${user.firstname}  ${user?.lastname}`}</span>
+                          <div>
+                            <div className="name">
+                              <span>{`${user.firstname}  ${user?.lastname}`}</span>
+                            </div>
+                            <div>
+                              {address.addressLine1}, {address.city},{" "}
+                              {address.state} - {address.postalCode},{" "}
+                              {address.country}
+                            </div>
                           </div>
                           <div>
-                            {address.addressLine1}, {address.city},{" "}
-                            {address.state} - {address.postalCode},{" "}
-                            {address.country}
+                            <button className="btn btn-primary">Deliver here</button>
                           </div>
                         </div>
                       </label>
@@ -443,7 +448,7 @@ const CheckoutPage = () => {
                     </button>
                   </div>
                 </form>
-                {message && <p>{message}</p>}
+                {message && <p className="text-danger">{message}</p>}
                 <button
                   className="btn btn-primary mt-20"
                   onClick={handlePayment}

@@ -87,7 +87,7 @@ const ShopContent = () => {
                       <div className="tp-shop-top mb-45">
                         <div className="row">
                           <div className="col-xl-6">
-                            <div className="tp-shop-top-left d-flex align-items-center ">
+                            {/* <div className="tp-shop-top-left d-flex align-items-center ">
                               <div className="tp-shop-top-result">
                                 <p>
                                   Showing {currentPage * itemsPerPage + 1}–
@@ -98,7 +98,7 @@ const ShopContent = () => {
                                   of {`${count}`} results
                                 </p>
                               </div>
-                            </div>
+                            </div> */}
                           </div>
                           <div className="col-xl-6">
                             <div className="tp-shop-top-right d-flex align-items-center justify-content-between justify-content-md-end ">
@@ -136,23 +136,39 @@ const ShopContent = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="tp-shop-pagination mt-20">
-                        <ReactPaginate
-                          previousLabel={<FaArrowLeft />}
-                          nextLabel={<FaArrowRight />}
-                          breakLabel={"..."}
-                          breakClassName={"break-me"}
-                          pageCount={Math.ceil(count / itemsPerPage)} // Total number of pages
-                          marginPagesDisplayed={2}
-                          pageRangeDisplayed={5}
-                          onPageChange={handlePageClick}
-                          containerClassName={"tp-pagination"}
-                          activeClassName={"active"}
-                          pageClassName={"page-item"}
-                          previousClassName={"page-item"}
-                          nextClassName={"page-item"}
-                          disabledClassName={"disabled"}
-                        />
+
+                      <div>
+                          <div className="tp-shop-top-left d-flex align-items-center justify-content-end ">
+                              <div className="tp-shop-top-result">
+                                <p>
+                                  Showing {currentPage * itemsPerPage + 1}–
+                                  {Math.min(
+                                    count,
+                                    (currentPage + 1) * itemsPerPage
+                                  )}{" "}
+                                  of {`${count}`} results
+                                </p>
+                              </div>
+                          </div>
+
+                          <div className="tp-shop-pagination mt-20">
+                            <ReactPaginate
+                              previousLabel={<FaArrowLeft />}
+                              nextLabel={<FaArrowRight />}
+                              breakLabel={"..."}
+                              breakClassName={"break-me"}
+                              pageCount={Math.ceil(count / itemsPerPage)} // Total number of pages
+                              marginPagesDisplayed={2}
+                              pageRangeDisplayed={5}
+                              onPageChange={handlePageClick}
+                              containerClassName={"tp-pagination"}
+                              activeClassName={"active"}
+                              pageClassName={"page-item"}
+                              previousClassName={"page-item"}
+                              nextClassName={"page-item"}
+                              disabledClassName={"disabled"}
+                            />
+                          </div>
                       </div>
                     </div>
                   </div>

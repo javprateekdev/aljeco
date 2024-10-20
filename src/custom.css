@@ -307,8 +307,15 @@ span.swiper-pagination-bullet {
   
   .address-details {
     display: flex;
-    flex-direction: column;
-    margin-top: -5px;
+    justify-content: space-between;
+    width: 100%;
+    /* flex-direction: column; */
+    /* margin-top: -5px; */
+    background: #efefef;
+    align-items: center;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 5px;
   }
   
   .address-details .name {
@@ -318,3 +325,9 @@ span.swiper-pagination-bullet {
   .tp-checkout-place{
     background-color: #fff !important;
   }
+
+  .tp-pagination {
+    display: flex;
+    gap: 1rem;
+    list-style-type: none;
+}
