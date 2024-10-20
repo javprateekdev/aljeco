@@ -1,44 +1,41 @@
-import React, { useState, useContext } from "react";
-import { BsCartDash, BsEye, BsHeart, BsStarFill } from "react-icons/bs";
+import React, { useState } from "react";
+import { BsStarFill } from "react-icons/bs";
 import { useRouter } from "next/navigation"; // Use useRouter from next/navigation
-import { CartContext } from "../../context/cartContext";
-import { WishListContext } from "@/context/WishListContext";
+
 import ContactModal from "./contactModal"; // Capitalize ContactModal
 
 const ProductContCard = ({ product }) => {
-  const { addToCart } = useContext(CartContext);
-  const { addToWishList } = useContext(WishListContext);
   const router = useRouter();
 
   // Handle adding product to the cart
-  const handleAddToCart = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/authentication/login");
-    } else {
-      const item = {
-        productItemId: product.productItems[0].itemId,
-        quantity: 1,
-        priceAtTime: product.productItems[0].salePrice,
-      };
-      addToCart(item); // Add the product to the cart using the context
-    }
-  };
+  // const handleAddToCart = () => {
+  //   const token = localStorage.getItem("token");
+  //   if (!token) {
+  //     router.push("/authentication/login");
+  //   } else {
+  //     const item = {
+  //       productItemId: product.productItems[0].itemId,
+  //       quantity: 1,
+  //       priceAtTime: product.productItems[0].salePrice,
+  //     };
+  //     addToCart(item); // Add the product to the cart using the context
+  //   }
+  // };
 
-  // Handle adding product to the wishlist
-  const handleAddToWishList = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/authentication/login");
-    } else {
-      const item = {
-        productItemId: product.productItems[0].itemId,
-        quantity: 1,
-        priceAtTime: product.productItems[0].salePrice,
-      };
-      addToWishList(item); // Add the product to the wishlist using the context
-    }
-  };
+  // // Handle adding product to the wishlist
+  // const handleAddToWishList = () => {
+  //   const token = localStorage.getItem("token");
+  //   if (!token) {
+  //     router.push("/authentication/login");
+  //   } else {
+  //     const item = {
+  //       productItemId: product.productItems[0].itemId,
+  //       quantity: 1,
+  //       priceAtTime: product.productItems[0].salePrice,
+  //     };
+  //     addToWishList(item); // Add the product to the wishlist using the context
+  //   }
+  // };
 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -104,7 +101,9 @@ const ProductContCard = ({ product }) => {
           <h3 className="tp-product-title-2 mt-10">
             <button
               type="button"
-              onClick={() => router.push(`/wholesale-order/${product.productId}`)} // Navigate to product details page
+              onClick={() =>
+                router.push(`/wholesale-order/${product.productId}`)
+              } // Navigate to product details page
               className="tp-product-title-button"
             >
               {product.productName}
@@ -113,7 +112,9 @@ const ProductContCard = ({ product }) => {
           <div className="tp-product-tag-2">
             <button
               type="button"
-              onClick={() => router.push(`/wholesale-order/${product.productId}`)} // Navigate to product details page
+              onClick={() =>
+                router.push(`/wholesale-order/${product.productId}`)
+              } // Navigate to product details page
               className="tp-product-description-button"
             >
               {product.productDescription}
@@ -134,7 +135,8 @@ const ProductContCard = ({ product }) => {
           </button>
         </div>
       </div>
-      <ContactModal show={show} handleClose={handleClose} /> {/* Pass show and handleClose */}
+      <ContactModal show={show} handleClose={handleClose} />{" "}
+      {/* Pass show and handleClose */}
     </>
   );
 };
