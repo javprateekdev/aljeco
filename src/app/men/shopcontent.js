@@ -57,7 +57,7 @@ const ShopContent = () => {
     };
 
     fetchData();
-  }, [checkedFilters, currentPage, buildQueryParams]); // Fetch data whenever the filters or page number change
+  }, []); // Fetch data whenever the filters or page number change
 
   // Function to handle page change
   const handlePageClick = (data) => {
