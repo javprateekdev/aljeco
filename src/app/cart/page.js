@@ -6,25 +6,68 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import { apiUrl } from "../api";
 import { CartContext } from "../../context/cartContext";
+import { toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "../utils/loader";
 
 const Cart = () => {
   const { cartItems: initialCartItems, fetchCart } = useContext(CartContext);
   const [cartItems, setCartItems] = useState(initialCartItems);
+  const [loading, setLoading] = useState(false);
+  const [couponCode, setCouponCode] = useState("");
+  const [message, setMessage] = useState("");
+  const [discountDetails, setDiscountDetails] = useState(null);
+
   const router = useRouter();
+  const token = localStorage.getItem("token");
+
+  const handleCouponCodeChange = (event) => {
+    setCouponCode(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await axios.post(
+        `${apiUrl}/payments/check`,
+        {
+          couponCode,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (response.data.valid) {
+        setMessage(response.data.message);
+        setDiscountDetails({
+          discountType: response.data.discountType,
+          discountValue: response.data.discountValue,
+        });
+      } else {
+        setMessage(response.data.message);
+        setDiscountDetails(null);
+      }
+    } catch (error) {
+      setMessage("An error occurred while validating the coupon.");
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     setCartItems(initialCartItems);
   }, [initialCartItems]);
 
   const updateCartItemQuantity = async (id, newQuantity) => {
-    const token = localStorage.getItem("token");
-
     const updatedCartItems = cartItems.map((item) =>
       item.id === id ? { ...item, quantity: newQuantity } : item
     );
     setCartItems(updatedCartItems);
 
     try {
+      setLoading(true);
       await axios.put(
         `${apiUrl}/cart/items/${id}/quantity`,
         { quantity: newQuantity },
@@ -35,12 +78,23 @@ const Cart = () => {
           },
         }
       );
-      // Optionally refetch cart after the API call
       await fetchCart();
+      toast.success("Cart Updated successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      setLoading(false);
     } catch (error) {
       console.error("Error updating cart item quantity:", error);
-      // Revert UI update if the API call fails
       setCartItems(initialCartItems);
+      setLoading(false);
     }
   };
 
@@ -57,32 +111,75 @@ const Cart = () => {
   };
 
   const deleteCartItem = async (id) => {
-    const token = localStorage.getItem("token");
     try {
-      const response = await axios.delete(`${apiUrl}/cart/items/${id}`, {
+      setLoading(true);
+      await axios.delete(`${apiUrl}/cart/items/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      alert("Cart Item Deleted Successfully");
+      toast.success("Item Deleted successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       await fetchCart();
+      setLoading(false);
     } catch (error) {
       console.error("Error deleting cart item:", error);
+      setLoading(false);
     }
   };
 
-  const calculateSalePrice = (originalPrice, discount) => {
-    return originalPrice - (originalPrice * discount) / 100;
+  const calculateTotalPrice = () => {
+    const subtotal = cartItems.reduce(
+      (total, item) => total + item.productItem.salePrice * item.quantity,
+      0
+    );
+
+    if (discountDetails) {
+      if (discountDetails.discountType === 'PERCENTAGE') {
+        return subtotal - (subtotal * discountDetails.discountValue) / 100;
+      } else if (discountDetails.discountType === "FIXED") {
+        return Math.max(0, subtotal - discountDetails.discountValue);
+      }
+    }
+
+    return subtotal;
+  };
+
+  const calculateDiscountAmount = () => {
+    const subtotal = cartItems.reduce(
+      (total, item) => total + item.productItem.salePrice * item.quantity,
+      0
+    );
+
+    if (discountDetails) {
+      if (discountDetails.discountType === 'PERCENTAGE') {
+        return (subtotal * discountDetails.discountValue) / 100;
+      } else if (discountDetails.discountType === "FIXED") {
+        return discountDetails.discountValue;
+      }
+    }
+    return 0;
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
       router.push("/authentication/login");
+    } else {
+      fetchCart();
     }
-    fetchCart();
-  }, []);
+  }, [token]);
+
+  if (loading) return <Loader />;
 
   return (
     <>
@@ -135,7 +232,7 @@ const Cart = () => {
                           <a href="#">{item.productItem.product.productName}</a>
                         </td>
                         <td className="tp-cart-price">
-                          <span>₹{item.priceAtTime}</span>
+                          <span>₹{item.productItem.salePrice}</span>
                         </td>
                         <td className="tp-cart-quantity">
                           <div className="tp-product-quantity mt-10 mb-10">
@@ -172,26 +269,7 @@ const Cart = () => {
                   </tbody>
                 </table>
               </div>
-              <div className="tp-cart-bottom">
-                <div className="row align-items-end">
-                  <div className="col-xl-6 col-md-8">
-                    <div className="tp-cart-coupon">
-                      <form action="#">
-                        <div className="tp-cart-coupon-input-box">
-                          <label>Coupon Code:</label>
-                          <div className="tp-cart-coupon-input d-flex align-items-center">
-                            <input
-                              type="text"
-                              placeholder="Enter Coupon Code"
-                            />
-                            <button type="submit">Apply</button>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
             <div className="col-xl-3 col-lg-4 col-md-6">
               <div className="tp-cart-checkout-wrapper position-sticky t-10">
@@ -207,43 +285,36 @@ const Cart = () => {
                     )}
                   </span>
                 </div>
+                {discountDetails && (
+                  <div className="tp-cart-checkout-discount d-flex align-items-center justify-content-between">
+                    <span>Discount</span>
+                    <span> - ₹{calculateDiscountAmount().toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="tp-cart-checkout-shipping">
-                  <h4 className="tp-cart-checkout-shipping-title">Shipping</h4>
                   <div className="tp-cart-checkout-shipping-option-wrapper">
-                    {/* <div className="tp-cart-checkout-shipping-option">
-                      <input id="flat_rate" type="radio" name="shipping" />
-                      <label htmlFor="flat_rate">
-                        Flat rate: <span>$20.00</span>
-                      </label>
-                    </div>
                     <div className="tp-cart-checkout-shipping-option">
-                      <input id="local_pickup" type="radio" name="shipping" />
-                      <label htmlFor="local_pickup">
-                        Local pickup: <span>$25.00</span>
-                      </label>
-                    </div> */}
-                    <div className="tp-cart-checkout-shipping-option">
-                      <input id="free_shipping" checked type="radio" name="shipping" />
+                      <input
+                        id="free_shipping"
+                        checked
+                        type="radio"
+                        name="shipping"
+                      />
                       <label htmlFor="free_shipping">Free shipping</label>
                     </div>
                   </div>
                 </div>
                 <div className="tp-cart-checkout-total d-flex align-items-center justify-content-between">
                   <span>Total</span>
-                  <span>
-                    {" "}
-                    ₹
-                    {cartItems.reduce(
-                      (total, item) =>
-                        total + item.productItem.salePrice * item.quantity,
-                      0
-                    )}
-                  </span>
+                  <span> ₹{calculateTotalPrice().toFixed(2)}</span>
                 </div>
                 <div className="tp-cart-checkout-proceed">
-                  <Link href="/checkout" className="tp-cart-checkout-btn w-100">
+                  <button
+                    className="tp-cart-checkout-btn w-100"
+                    onClick={() => router.push("/checkout")}
+                  >
                     Proceed to Checkout
-                  </Link>
+                  </button>
                 </div>
               </div>
             </div>

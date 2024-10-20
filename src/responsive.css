@@ -79,13 +79,15 @@
         line-height: 20px !important;
         background-color: var(--tp-theme-secondary) !important;
     }
-    .tp-mobile-item-btn{
-        border-top: 4px solid transparent;
-    }
-    .tp-mobile-item-btn:hover {
+    /* .tp-mobile-item-btn:hover {
         color: var(--tp-theme-brown) !important;
         font-weight: 800;
         border-color:var(--tp-theme-brown) !important;
+    } */
+
+    .tp-mobile-item-btn.active {
+        color: var(--tp-theme-brown) !important;
+        font-weight: 800;
     }
 
 }

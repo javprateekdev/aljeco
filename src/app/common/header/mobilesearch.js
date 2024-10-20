@@ -1,6 +1,8 @@
 "use client"
 import React, { useState } from 'react';
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiSearch as FiSearchFilled } from "react-icons/fi";
+import { FaSearch } from "react-icons/fa";
+
 import Offcanvas from 'react-bootstrap/Offcanvas';
 
 const MobileSearch = () => {
@@ -12,9 +14,17 @@ const MobileSearch = () => {
   return (
     <>
       <div className="tp-mobile-item text-center">
-        <a href="#" className="tp-mobile-item-btn" onClick={handleShow}>
-          <FiSearch />
-          <span>Search</span>
+        <a
+          href="#"
+          className={`tp-mobile-item-btn ${show ? "active" : ""}`}
+          onClick={handleShow}
+        >
+          {show ? (
+            <FaSearch className="icon-active" /> 
+          ) : (
+            <FiSearch className="icon-default" /> 
+          )}
+          <span className={show ? "text-active" : "text-default"}>Search</span>
         </a>
       </div>
 

@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import ProductContCard from "./productcontcard";
 import { MdOutlineFilterAlt } from "react-icons/md";
@@ -10,8 +11,7 @@ import axios from "axios";
 import { apiUrl } from "../api";
 import { useFilter } from "@/context/FilterContext";
 import Loader from "../utils/loader";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import ReactPaginate from "react-paginate";
+
 
 const ShopContent = () => {
   const [show, setShow] = useState(false);
@@ -22,14 +22,10 @@ const ShopContent = () => {
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const { checkedFilters } = useFilter(); // Accessing the filters from context
-  const [currentPage, setCurrentPage] = useState(0); // Current page index (0-based)
-  const itemsPerPage = 10; // Number of items per page
 
   // Function to build the query parameters from checked filters
   const buildQueryParams = () => {
     const params = new URLSearchParams();
-    params.append("skip", currentPage * itemsPerPage); // Calculate skip
-    params.append("take", itemsPerPage); // Set take
 
     for (const filterType in checkedFilters) {
       if (checkedFilters[filterType].length > 0) {
@@ -45,6 +41,7 @@ const ShopContent = () => {
       setLoading(true);
       try {
         const query = buildQueryParams();
+        console.log("query", query);
         // Build query string
         const response = await axios.get(`${apiUrl}/product?${query}`); // Include query in the API call
         setCount(response.data.count);
@@ -57,14 +54,9 @@ const ShopContent = () => {
     };
 
     fetchData();
-  }, [checkedFilters, currentPage]); // Fetch data whenever the filters or page number change
+  }, [checkedFilters]); // Fetch data whenever the filters change
 
-  // Function to handle page change
-  const handlePageClick = (data) => {
-    setCurrentPage(data.selected); // Update current page index based on the clicked page
-  };
-
-  if (loading) return <Loader />;
+  if (loading) return <Loader/>;
 
   return (
     <>
@@ -74,6 +66,15 @@ const ShopContent = () => {
             <Nav className="gap-2" variant="pills">
               <Nav.Item>
                 <Nav.Link eventKey="all">All</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="tryhome">Try at home</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="designstore">Design in store</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey="newin">New in</Nav.Link>
               </Nav.Item>
             </Nav>
             <Tab.Content className="pt-40">
@@ -87,18 +88,11 @@ const ShopContent = () => {
                       <div className="tp-shop-top mb-45">
                         <div className="row">
                           <div className="col-xl-6">
-                            {/* <div className="tp-shop-top-left d-flex align-items-center ">
+                            <div className="tp-shop-top-left d-flex align-items-center ">
                               <div className="tp-shop-top-result">
-                                <p>
-                                  Showing {currentPage * itemsPerPage + 1}–
-                                  {Math.min(
-                                    count,
-                                    (currentPage + 1) * itemsPerPage
-                                  )}{" "}
-                                  of {`${count}`} results
-                                </p>
+                                <p>Showing 1–14 of {`${count}`} results</p>
                               </div>
-                            </div> */}
+                            </div>
                           </div>
                           <div className="col-xl-6">
                             <div className="tp-shop-top-right d-flex align-items-center justify-content-between justify-content-md-end ">
@@ -136,43 +130,48 @@ const ShopContent = () => {
                           </div>
                         </div>
                       </div>
-
-                      <div>
-                          <div className="tp-shop-top-left d-flex align-items-center justify-content-end ">
-                              <div className="tp-shop-top-result">
-                                <p>
-                                  Showing {currentPage * itemsPerPage + 1}–
-                                  {Math.min(
-                                    count,
-                                    (currentPage + 1) * itemsPerPage
-                                  )}{" "}
-                                  of {`${count}`} results
-                                </p>
-                              </div>
-                          </div>
-
-                          <div className="tp-shop-pagination mt-20">
-                            <ReactPaginate
-                              previousLabel={<FaArrowLeft />}
-                              nextLabel={<FaArrowRight />}
-                              breakLabel={"..."}
-                              breakClassName={"break-me"}
-                              pageCount={Math.ceil(count / itemsPerPage)} // Total number of pages
-                              marginPagesDisplayed={2}
-                              pageRangeDisplayed={5}
-                              onPageChange={handlePageClick}
-                              containerClassName={"tp-pagination"}
-                              activeClassName={"active"}
-                              pageClassName={"page-item"}
-                              previousClassName={"page-item"}
-                              nextClassName={"page-item"}
-                              disabledClassName={"disabled"}
-                            />
-                          </div>
+                      <div className="tp-shop-pagination mt-20">
+                        <div className="tp-pagination">
+                          <nav>
+                            <ul>
+                              <li>
+                                <a
+                                  href="#"
+                                  className="tp-pagination-prev prev page-numbers"
+                                >
+                                  <FaArrowLeft />
+                                </a>
+                              </li>
+                              <li>
+                                <a href="#">1</a>
+                              </li>
+                              <li>
+                                <span className="current">2</span>
+                              </li>
+                              <li>
+                                <a href="#">3</a>
+                              </li>
+                              <li>
+                                <a href="#" className="next page-numbers">
+                                  <FaArrowRight />
+                                </a>
+                              </li>
+                            </ul>
+                          </nav>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </Tab.Pane>
+              <Tab.Pane eventKey="tryhome">
+                <h2>Try at home</h2>
+              </Tab.Pane>
+              <Tab.Pane eventKey="designstore">
+                <h2>Design store</h2>
+              </Tab.Pane>
+              <Tab.Pane eventKey="newin">
+                <h2>New In</h2>
               </Tab.Pane>
             </Tab.Content>
           </Tab.Container>

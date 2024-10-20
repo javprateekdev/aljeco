@@ -1,29 +1,103 @@
 "use client";
 import Link from "next/link";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { WishListContext } from "../../context/WishListContext";
+import { CartContext } from "../../context/cartContext"; // Add CartContext to add items to the cart
 import { BiPlus, BiMinus } from "react-icons/bi";
-
+import { useRouter } from "next/navigation";
+import { toast, Bounce } from "react-toastify";
+import axios from "axios";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "../utils/loader";
+import { apiUrl } from "../api";
 const Wishlist = () => {
-  const { wishListItems, fetchWishlist } = useContext(WishListContext);
+  const { wishListItems, fetchWishlist, updateWishlistItem } =
+    useContext(WishListContext); // Add updateWishlistItem
+  const { addToCart } = useContext(CartContext); // Add addToCart for adding items to cart
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [quantities, setQuantities] = useState({}); // Track item quantities
+
   const deleteWishListItem = async (id) => {
+    console.log("delete");
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.delete(`${apiUrl}/cart/items/${id}`, {
+      setLoading(true);
+      const response = await axios.delete(`${apiUrl}/wishlist/items/${id}`, {
         headers: {
-          Authorization: `Bearer ${token}`, // Include the Bearer token for authorization
-          "Content-Type": "application/json", // Ensure proper content type
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       });
-      alert("Cart Item Deleted Succesfully");
-      await fetchCart();
+      toast.success("Deleted Successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      await fetchWishlist(); // Fetch the updated wishlist
+      setLoading(false);
     } catch (error) {
-      console.error("Error fetching cart data:", error);
+      console.error("Error deleting wishlist item:", error);
+      setLoading(false);
     }
   };
+
+  // Function to handle adding items to cart
+  const handleAddToCart = (item) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/authentication/login");
+    } else {
+      const cartItem = {
+        productItemId: item.productItem.itemId,
+        quantity: quantities[item.wishlistId] || 1, // Use the current quantity
+        priceAtTime: item.productItem.salePrice,
+      };
+      addToCart(cartItem); // Add to cart using context
+      toast.success("Added to Cart!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+    }
+  };
+
+  // Handle increasing quantity
+  const handleIncrease = (id) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [id]: (prevQuantities[id] || 1) + 1,
+    }));
+  };
+
+  // Handle decreasing quantity
+  const handleDecrease = (id) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [id]: Math.max((prevQuantities[id] || 1) - 1, 1),
+    }));
+  };
+
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/authentication/login");
+    }
     fetchWishlist();
   }, []);
+
+  if (loading) return <Loader />;
+
   return (
     <>
       <section className="breadcrumb__area include-bg bg-light pt-95 pb-50">
@@ -34,7 +108,8 @@ const Wishlist = () => {
                 <h3 className="breadcrumb__title">Wishlist</h3>
                 <div className="breadcrumb__list">
                   <span>
-                    <a href="#">Home</a>
+                    <button onClick={() => router.push("/")}>Home</button>{" "}
+                    {/* Use router.push */}
                   </span>
                   <span>Wishlist</span>
                 </div>
@@ -63,39 +138,66 @@ const Wishlist = () => {
                   </thead>
                   <tbody>
                     {wishListItems.map((item) => (
-                      <tr key={item.id}>
+                      <tr key={item.wishlistId}>
                         <td className="tp-cart-img">
-                          <a href="#">
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/product/${item.productItem.productId}`
+                              )
+                            }
+                          >
+                            {" "}
+                            {/* Use router.push */}
                             <img
                               src={item?.productItem?.images[0]?.url}
                               alt={item.productItem.product.productName}
                             />
-                          </a>
+                          </button>
                         </td>
                         <td className="tp-cart-title">
-                          <a href="#">{item.productItem.product.productName}</a>
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/product/${item.productItem.productId}`
+                              )
+                            }
+                          >
+                            {" "}
+                            {/* Use router.push */}
+                            {item.productItem.product.productName}
+                          </button>
                         </td>
                         <td className="tp-cart-price">
                           <span>₹{item.productItem.salePrice}</span>
                         </td>
                         <td className="tp-cart-quantity">
                           <div className="tp-product-quantity mt-10 mb-10">
-                            <span className="tp-cart-minus">
+                            <span
+                              className="tp-cart-minus"
+                              onClick={() => handleDecrease(item.wishlistId)}
+                            >
                               <BiMinus />
                             </span>
                             <input
                               className="tp-cart-input"
                               type="text"
-                              value={1}
+                              value={quantities[item.wishlistId] || 1}
                               readOnly
                             />
-                            <span className="tp-cart-plus">
+                            <span
+                              className="tp-cart-plus"
+                              onClick={() => handleIncrease(item.wishlistId)}
+                            >
                               <BiPlus />
                             </span>
                           </div>
                         </td>
                         <td>
-                          <button className="btn btn-sm btn-primary">
+                          <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => handleAddToCart(item)}
+                          >
                             Add To Cart
                           </button>
                         </td>
@@ -115,10 +217,13 @@ const Wishlist = () => {
               <div className="tp-cart-bottom">
                 <div className="row align-items-end">
                   <div className="col-xl-6 col-md-8">
-                    <div class="tp-cart-update">
-                      <Link href="/cart" class="tp-cart-update-btn">
+                    <div className="tp-cart-update">
+                      <button
+                        onClick={() => router.push("/cart")} // Use router.push instead of href
+                        className="tp-cart-update-btn"
+                      >
                         Go To Cart
-                      </Link>
+                      </button>
                     </div>
                   </div>
                 </div>

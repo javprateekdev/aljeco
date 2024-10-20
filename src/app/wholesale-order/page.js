@@ -34,13 +34,13 @@ export default function Page() {
             <div className="col-xxl-12">
               <div className="breadcrumb__content p-relative z-index-1">
                 <h3 className="breadcrumb__title">
-                  Mens {`${count}`} Designs{" "}
+                    Products You May Like
                 </h3>
                 <div className="breadcrumb__list">
                   <span>
                     <Link href="/">Home</Link>
                   </span>
-                  <span>Mens</span>
+                  <span>Wholesale  Order</span>
                 </div>
               </div>
             </div>

@@ -2,6 +2,8 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { apiUrl } from "@/app/api";
+import { toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Create the WishList context
 export const WishListContext = createContext();
@@ -45,6 +47,17 @@ export const WishListProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
       });
+      toast.success("Item Added To Wishlist!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       if (response.status === 201) {
         fetchWishlist(); // Refetch wishlist after adding the item
       }
@@ -59,7 +72,9 @@ export const WishListProvider = ({ children }) => {
   }, []);
 
   return (
-    <WishListContext.Provider value={{ wishListItems, fetchWishlist, addToWishList }}>
+    <WishListContext.Provider
+      value={{ wishListItems, fetchWishlist, addToWishList }}
+    >
       {children}
     </WishListContext.Provider>
   );

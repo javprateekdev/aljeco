@@ -9,14 +9,17 @@ import Customize from "./Customize";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Reviews from "../reviews";
-import Loader from "@/app/utils/loader";
-import { toast, Bounce } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import ContactModal from "../contactModal";
+
 const ProductDetails = ({ params }) => {
   const { id } = params; // Getting the product id from the route parameters
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(true);
+  const [show, setShow] = useState(false);
   const router = useRouter();
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   // Function to add product to cart
   const addToCart = async () => {
@@ -28,6 +31,7 @@ const ProductDetails = ({ params }) => {
 
     // Ensure product data is loaded before proceeding
     if (!product?.productItems || !product?.productItems[0]) {
+      alert("Product data is not available!");
       return;
     }
 
@@ -35,9 +39,7 @@ const ProductDetails = ({ params }) => {
     const data = {
       productItemId: product.productItems[0].itemId, // Use the first product item for demo
       quantity: 1, // Set default quantity to 1
-      priceAtTime:
-        product.productItems[0].salePrice ||
-        product.productItems[0].originalPrice, // Get the current price
+      priceAtTime: product.productItems[0].salePrice || product.productItems[0].originalPrice, // Get the current price
     };
 
     try {
@@ -50,18 +52,7 @@ const ProductDetails = ({ params }) => {
 
       // Handle success
       if (response.status === 201) {
-        toast.success("Item Added To the Cart!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        setLoading(false);
+        alert("Item added to cart successfully!");
       }
     } catch (error) {
       console.error("Error adding item to cart:", error);
@@ -83,11 +74,11 @@ const ProductDetails = ({ params }) => {
       });
   }, [id]); // Dependency array to trigger this effect when the `id` changes
 
-  if (loading) return <Loader />;
+  if (loading) return <p>Loading...</p>;
 
   return (
     <>
-      <section className="pt-4 pb-60">
+      <section className="inbreadcrumb">
         <div className="container-fluid">
           <div className="row justify-content-between">
             <div className="col-md-8">
@@ -113,9 +104,7 @@ const ProductDetails = ({ params }) => {
                 </div>
                 <div className="tp-product-details-price-wrapper mb-20">
                   <p className="tp-product-details-price new-price mb-0">
-                    ₹
-                    {product?.productItems[0]?.salePrice ||
-                      product?.productItems[0]?.originalPrice}
+                    ₹{product?.productItems[0]?.salePrice || product?.productItems[0]?.originalPrice}
                   </p>
                   <span>MRP inclusive of all taxes</span>
                 </div>
@@ -123,14 +112,17 @@ const ProductDetails = ({ params }) => {
                   {product.productName}
                 </h1>
                 <p>{product.productDescription}</p>
-                <Customize />
+                {/* <Customize /> */}
                 <div className="tp-product-details-action-wrapper">
-                  <div className="d-flex align-items-center gap-3">
+                <button onClick={handleShow} className="btn btn-primary getbestprice">
+                    Get Best Price
+                </button>
+                  {/* <div className="d-flex align-items-center gap-3">
                     <div className="tp-product-details-action-item-wrapper w-75">
                       <div className="tp-product-details-add-to-cart">
                         <button
                           className="btn btn-primary w-100"
-                          onClick={addToCart} // Attach the addToCart function
+                          onClick={addToCart}
                         >
                           Add To Cart
                         </button>
@@ -142,7 +134,7 @@ const ProductDetails = ({ params }) => {
                     <button type="button" className="btn btn-outline-primary">
                       <BsShare />
                     </button>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="tp-product-details-query pt-4">
                   <h5 className="pb-2">Delivery, Stores & Trial</h5>
@@ -173,11 +165,15 @@ const ProductDetails = ({ params }) => {
           </div>
         </div>
       </section>
-      <hr />
 
-      <Reviews />
+      <Reviews/>
+
 
       <RelatedProducts />
+
+      <ContactModal show={show} handleClose={handleClose} /> {/* Pass show and handleClose */}
+
+
     </>
   );
 };
