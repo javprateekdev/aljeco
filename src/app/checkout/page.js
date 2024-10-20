@@ -224,15 +224,33 @@ const CheckoutPage = () => {
         contact: user.phone || "9999999999",
       },
     };
-
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
 
   return (
     <>
+
+
+    <section className="breadcrumb__area include-bg inbreadcrumb ">
+         <div className="container">
+            <div className="row">
+               <div className="col-xxl-12">
+                  <div className="breadcrumb__content p-relative z-index-1">
+                     <h3 className="breadcrumb__title">Checkout</h3>
+                     <div className="breadcrumb__list">
+                        <span><a href="#">Home</a></span>
+                        <span>Checkout</span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+
       <section
-        className="tp-checkout-area pb-120"
+        className="tp-checkout-area py-4 "
         style={{ background: "#EFF1F5" }}
       >
         <div className="container">
@@ -262,57 +280,88 @@ const CheckoutPage = () => {
                 </div>
 
                 <h4>Add New Address</h4>
-                <form>
-                  <input
-                    type="text"
-                    placeholder="Address Line 1"
-                    value={newAddress.addressLine1}
-                    onChange={(e) =>
-                      setNewAddress({
-                        ...newAddress,
-                        addressLine1: e.target.value,
-                      })
-                    }
-                  />
-                  <input
-                    type="text"
-                    placeholder="City"
-                    value={newAddress.city}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, city: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    placeholder="State"
-                    value={newAddress.state}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, state: e.target.value })
-                    }
-                  />
-                  <input
-                    type="text"
-                    placeholder="Postal Code"
-                    value={newAddress.postalCode}
-                    onChange={(e) =>
-                      setNewAddress({
-                        ...newAddress,
-                        postalCode: e.target.value,
-                      })
-                    }
-                  />
-                  <input
-                    type="text"
-                    placeholder="Country"
-                    value={newAddress.country}
-                    onChange={(e) =>
-                      setNewAddress({ ...newAddress, country: e.target.value })
-                    }
-                  />
-                  <button type="button" onClick={handleAddNewAddress}>
-                    Add Address
-                  </button>
-                </form>
+                <div className="tp-checkout-bill-form">
+                  <form>
+                    <div className="tp-checkout-bill-inner">
+                      <div className="row">
+                        <div className="col-md-12">
+                          <div className="tp-checkout-input">
+                              <label>Address Line 1</label>
+                              <input
+                                type="text"
+                                placeholder="Address Line 1"
+                                value={newAddress.addressLine1}
+                                onChange={(e) =>
+                                  setNewAddress({
+                                    ...newAddress,
+                                    addressLine1: e.target.value,
+                                  })
+                                }
+                              />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="tp-checkout-input">
+                            <label>City</label>
+                            <input
+                                type="text"
+                                placeholder="City"
+                                value={newAddress.city}
+                                onChange={(e) =>
+                                  setNewAddress({ ...newAddress, city: e.target.value })
+                                }
+                              />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="tp-checkout-input">
+                              <label>State</label>
+                              <input
+                                  type="text"
+                                  placeholder="State"
+                                  value={newAddress.state}
+                                  onChange={(e) =>
+                                    setNewAddress({ ...newAddress, state: e.target.value })
+                                  }
+                                />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="tp-checkout-input">
+                            <label>Postal Code</label>
+                            <input
+                                type="text"
+                                placeholder="Postal Code"
+                                value={newAddress.postalCode}
+                                onChange={(e) =>
+                                  setNewAddress({
+                                    ...newAddress,
+                                    postalCode: e.target.value,
+                                  })
+                                }
+                              />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="tp-checkout-input">
+                            <label>Country</label>
+                            <input
+                                type="text"
+                                placeholder="Country"
+                                value={newAddress.country}
+                                onChange={(e) =>
+                                  setNewAddress({ ...newAddress, country: e.target.value })
+                                }
+                              />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button className="btn btn-primary " type="button" onClick={handleAddNewAddress}>
+                      Add Address
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
             <div className="col-lg-5">
@@ -329,15 +378,18 @@ const CheckoutPage = () => {
                 <p>Discount: ₹{discountAmount}</p>
                 <p>Total Amount: ₹{calculateTotalAmount()}</p>
                 <form onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    placeholder="Coupon Code"
-                    value={couponCode}
-                    onChange={handleCouponCodeChange}
-                  />
-                  <button type="submit">Apply Coupon</button>
+                  <div className="d-flex mb-10">
+                      <input
+                          type="text"
+                          placeholder="Coupon Code"
+                          value={couponCode}
+                          onChange={handleCouponCodeChange}
+                          className="coupaninput"
+                        />
+                        <button className="btn btn-success applycoupan" type="submit">Apply Coupon</button>
+                  </div>
                 </form>
-                <button onClick={handlePayment}>Place Order</button>
+                <button className="btn btn-primary" onClick={handlePayment}>Place Order</button>
                 {message && <p>{message}</p>}
               </div>
             </div>

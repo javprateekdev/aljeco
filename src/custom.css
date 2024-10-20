@@ -232,3 +232,32 @@ span.swiper-pagination-bullet {
 .ratings svg{
     color: #c48d35;
 }
+
+
+.inbreadcrumb {
+    padding: 130px 0px 35px;
+}
+.minorder{
+    font-size: 12px;
+}
+
+.tp-shop-widget {
+    padding-bottom: 15px;
+}
+
+.getbestprice{
+    margin: 0 auto;
+    display: block;
+    padding: 15px 30px;
+    min-width: 250px;
+    font-size: 20px;
+}
+
+.applycoupan{
+    border-left: 0px;
+    white-space: nowrap;
+    border-radius: 0px 7px 7px 0px;
+}
+.coupaninput{
+    border-radius: 5px 0px 0px 5px !important;
+}

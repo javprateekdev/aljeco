@@ -2,10 +2,10 @@
 import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 import { FiSearch } from "react-icons/fi";
-import { FaRegHeart, FaRegUser, FaSearch } from "react-icons/fa";
-import { BsHandbag, BsSearch } from "react-icons/bs";
+import { FaHeart, FaRegHeart, FaRegUser, FaSearch, FaUser } from "react-icons/fa";
+import { BsHandbag, BsHandbagFill, BsSearch } from "react-icons/bs";
 import { RiMenu3Line } from "react-icons/ri";
-import { MdLogin, MdOutlineHome } from "react-icons/md";
+import { MdHome, MdLogin, MdOutlineHome } from "react-icons/md";
 import { useRouter } from "next/navigation"; // Import useRouter
 import "swiper/css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -23,6 +23,7 @@ import { BiUser } from "react-icons/bi";
 
 export default function Header() {
   const { cartItems, fetchCart } = useContext(CartContext);
+  const [activeMenu, setActiveMenu] = useState("");
   const { wishListItems, fetchWishlist } = useContext(WishListContext);
   const router = useRouter(); // Use router for navigation
 
@@ -33,58 +34,83 @@ export default function Header() {
 
   const loggedIn = localStorage.getItem("token");
 
+
+  useEffect(() => {
+    const currentPath = router.pathname;
+    if (currentPath === "/") setActiveMenu("home");
+    else if (currentPath === "/wishlist") setActiveMenu("wishlist");
+    else if (currentPath === "/profile") setActiveMenu("profile");
+    else if (currentPath === "/cart") setActiveMenu("cart");
+  }, [router.pathname]);
+  const handleMenuClick = (menu, path) => {
+    setActiveMenu(menu);
+    router.push(path);
+  };
+
   return (
     <>
-      <div id="tp-bottom-menu-sticky" className="tp-mobile-menu d-lg-none">
-        <div className="container">
-          <div className="row">
-            <div className="col">
-              <div className="tp-mobile-item text-center">
-                <button onClick={() => router.push("/")} className="tp-mobile-item-btn">
-                  <MdOutlineHome />
-                  <span>Home</span>
-                </button>
-              </div>
+    <div id="tp-bottom-menu-sticky" className="tp-mobile-menu d-lg-none">
+      <div className="container">
+        <div className="row">
+          <div className="col">
+            <div className="tp-mobile-item text-center">
+              <button
+                onClick={() => handleMenuClick("home", "/")}
+                className={`tp-mobile-item-btn ${ activeMenu === "home" ? "active" : "" }`}>
+                {activeMenu === "home" ? <MdHome /> : <MdOutlineHome />}
+                <span>Home</span>
+              </button>
             </div>
-            <div className="col">
-              <div className="tp-mobile-item text-center">
-                <button
-                  onClick={() => router.push(loggedIn ? "/wishlist" : "/authentication/login")}
-                  className="tp-mobile-item-btn tp-search-open-btn"
-                >
-                  <FaRegHeart />
-                  <span>Wishlist</span>
-                </button>
-              </div>
+          </div>
+          <div className="col">
+            <div className="tp-mobile-item text-center">
+              <button
+                onClick={() =>
+                  handleMenuClick(
+                    "wishlist",
+                    loggedIn ? "/wishlist" : "/authentication/login"
+                  )
+                }
+                className={`tp-mobile-item-btn ${ activeMenu === "wishlist" ? "active" : "" }`}>
+                {activeMenu === "wishlist" ? <FaHeart /> : <FaRegHeart />}
+                <span>Wishlist</span>
+              </button>
             </div>
-            <div className="col">
-              <MobileSearch />
+          </div>
+          <div className="col">
+            <MobileSearch />
+          </div>
+          <div className="col">
+            <div className="tp-mobile-item text-center">
+              <button
+                onClick={() => handleMenuClick("profile", "/profile")}
+                className={`tp-mobile-item-btn ${ activeMenu === "profile" ? "active" : "" }`}>
+                {activeMenu === "profile" ? <FaUser /> : <FaRegUser />}
+                <span>Account</span>
+              </button>
             </div>
-            <div className="col">
-              <div className="tp-mobile-item text-center">
-                <button onClick={() => router.push("/profile")} className="tp-mobile-item-btn">
-                  <FaRegUser />
-                  <span>Account</span>
-                </button>
-              </div>
-            </div>
-            <div className="col">
-              <div className="tp-mobile-item text-center">
-                <button
-                  onClick={() => router.push(loggedIn ? "/cart" : "/authentication/login")}
-                  className="tp-mobile-item-btn text-center"
-                >
-                  <BsHandbag />
-                  <span className="tp-header-action-badge mobilecart">
-                    {cartItems.length ? cartItems.length : 0}
-                  </span>
-                  <span>Cart</span>
-                </button>
-              </div>
+          </div>
+          <div className="col">
+            <div className="tp-mobile-item text-center">
+              <button
+                onClick={() =>
+                  handleMenuClick(
+                    "cart",
+                    loggedIn ? "/cart" : "/authentication/login"
+                  )
+                }
+                className={`tp-mobile-item-btn ${ activeMenu === "cart" ? "active" : ""}`}>
+                {activeMenu === "cart" ? <BsHandbagFill /> : <BsHandbag />}
+                <span className="tp-header-action-badge mobilecart">
+                  {cartItems.length ? cartItems.length : 0}
+                </span>
+                <span>Cart</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
       <header>
         <div className="tp-header-area tp-header-style-darkRed tp-header-height">
@@ -108,6 +134,9 @@ export default function Header() {
                         <ul>
                           <li>
                             <button onClick={() => router.push("/men")}>Mens</button>
+                          </li>
+                          <li>
+                            <button onClick={() => router.push("/wholesale-order")}>Wholesale  Order</button>
                           </li>
                         </ul>
                       </nav>
