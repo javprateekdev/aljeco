@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { BsCartDash, BsEye, BsHeart, BsStarFill } from "react-icons/bs";
 import { useRouter } from "next/navigation"; // Use useRouter from next/navigation
 import { CartContext } from "../../context/CartContext";
@@ -8,8 +8,8 @@ const ProductContCard = ({ product }) => {
   const { addToCart } = useContext(CartContext);
   const { addToWishList } = useContext(WishListContext);
   const router = useRouter();
-  
-  const[token, setToken] =useState('')
+
+  const [token, setToken] = useState("");
   useEffect(() => {
     const token = localStorage.getItem("token");
     setToken(token);
