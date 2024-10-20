@@ -57,7 +57,7 @@ const ShopContent = () => {
     };
 
     fetchData();
-  }, [checkedFilters, currentPage]); // Fetch data whenever the filters or page number change
+  }, [checkedFilters, currentPage, buildQueryParams]); // Fetch data whenever the filters or page number change
 
   // Function to handle page change
   const handlePageClick = (data) => {
@@ -138,37 +138,37 @@ const ShopContent = () => {
                       </div>
 
                       <div>
-                          <div className="tp-shop-top-left d-flex align-items-center justify-content-end ">
-                              <div className="tp-shop-top-result">
-                                <p>
-                                  Showing {currentPage * itemsPerPage + 1}–
-                                  {Math.min(
-                                    count,
-                                    (currentPage + 1) * itemsPerPage
-                                  )}{" "}
-                                  of {`${count}`} results
-                                </p>
-                              </div>
+                        <div className="tp-shop-top-left d-flex align-items-center justify-content-end ">
+                          <div className="tp-shop-top-result">
+                            <p>
+                              Showing {currentPage * itemsPerPage + 1}–
+                              {Math.min(
+                                count,
+                                (currentPage + 1) * itemsPerPage
+                              )}{" "}
+                              of {`${count}`} results
+                            </p>
                           </div>
+                        </div>
 
-                          <div className="tp-shop-pagination mt-20">
-                            <ReactPaginate
-                              previousLabel={<FaArrowLeft />}
-                              nextLabel={<FaArrowRight />}
-                              breakLabel={"..."}
-                              breakClassName={"break-me"}
-                              pageCount={Math.ceil(count / itemsPerPage)} // Total number of pages
-                              marginPagesDisplayed={2}
-                              pageRangeDisplayed={5}
-                              onPageChange={handlePageClick}
-                              containerClassName={"tp-pagination"}
-                              activeClassName={"active"}
-                              pageClassName={"page-item"}
-                              previousClassName={"page-item"}
-                              nextClassName={"page-item"}
-                              disabledClassName={"disabled"}
-                            />
-                          </div>
+                        <div className="tp-shop-pagination mt-20">
+                          <ReactPaginate
+                            previousLabel={<FaArrowLeft />}
+                            nextLabel={<FaArrowRight />}
+                            breakLabel={"..."}
+                            breakClassName={"break-me"}
+                            pageCount={Math.ceil(count / itemsPerPage)} // Total number of pages
+                            marginPagesDisplayed={2}
+                            pageRangeDisplayed={5}
+                            onPageChange={handlePageClick}
+                            containerClassName={"tp-pagination"}
+                            activeClassName={"active"}
+                            pageClassName={"page-item"}
+                            previousClassName={"page-item"}
+                            nextClassName={"page-item"}
+                            disabledClassName={"disabled"}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

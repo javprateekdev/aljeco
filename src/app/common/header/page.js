@@ -2,7 +2,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import Image from "next/image";
 import { FiSearch } from "react-icons/fi";
-import { FaHeart, FaRegHeart, FaRegUser, FaSearch, FaUser } from "react-icons/fa";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaRegUser,
+  FaSearch,
+  FaUser,
+} from "react-icons/fa";
 import { BsHandbag, BsHandbagFill, BsSearch } from "react-icons/bs";
 import { RiMenu3Line } from "react-icons/ri";
 import { MdHome, MdLogin, MdOutlineHome } from "react-icons/md";
@@ -14,11 +20,8 @@ import "../../../main.css";
 import "../../../custom.css";
 import MobileMenus from "./mobilemenus";
 import MobileSearch from "./mobilesearch";
-import MobileSlideMenus from "./MobileSlideMenus";
-import axios from "axios";
-import { apiUrl } from "@/app/api";
-import { CartContext } from "@/context/cartContext";
-import { WishListContext } from "@/context/WishListContext";
+import { CartContext } from "../../../context/CartContext";
+import { WishListContext } from "../../../context/WishListContext";
 import { BiUser } from "react-icons/bi";
 
 export default function Header() {
@@ -26,14 +29,17 @@ export default function Header() {
   const [activeMenu, setActiveMenu] = useState("");
   const { wishListItems, fetchWishlist } = useContext(WishListContext);
   const router = useRouter(); // Use router for navigation
-
+  const [loggedIn, setLoggedIn] = useState(false);
   useEffect(() => {
     fetchCart();
     fetchWishlist();
+  }, [fetchCart, fetchWishlist]);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setLoggedIn(true);
+    }
   }, []);
-
-  const loggedIn = localStorage.getItem("token");
-
 
   useEffect(() => {
     const currentPath = router.pathname;
@@ -49,78 +55,96 @@ export default function Header() {
 
   return (
     <>
-    <div id="tp-bottom-menu-sticky" className="tp-mobile-menu d-lg-none">
-      <div className="container">
-        <div className="row">
-          <div className="col">
-            <div className="tp-mobile-item text-center">
-              <button
-                onClick={() => handleMenuClick("home", "/")}
-                className={`tp-mobile-item-btn ${ activeMenu === "home" ? "active" : "" }`}>
-                {activeMenu === "home" ? <MdHome /> : <MdOutlineHome />}
-                <span>Home</span>
-              </button>
+      <div id="tp-bottom-menu-sticky" className="tp-mobile-menu d-lg-none">
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <div className="tp-mobile-item text-center">
+                <button
+                  onClick={() => handleMenuClick("home", "/")}
+                  className={`tp-mobile-item-btn ${
+                    activeMenu === "home" ? "active" : ""
+                  }`}
+                >
+                  {activeMenu === "home" ? <MdHome /> : <MdOutlineHome />}
+                  <span>Home</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="col">
-            <div className="tp-mobile-item text-center">
-              <button
-                onClick={() =>
-                  handleMenuClick(
-                    "wishlist",
-                    loggedIn ? "/wishlist" : "/authentication/login"
-                  )
-                }
-                className={`tp-mobile-item-btn ${ activeMenu === "wishlist" ? "active" : "" }`}>
-                {activeMenu === "wishlist" ? <FaHeart /> : <FaRegHeart />}
-                <span>Wishlist</span>
-              </button>
+            <div className="col">
+              <div className="tp-mobile-item text-center">
+                <button
+                  onClick={() =>
+                    handleMenuClick(
+                      "wishlist",
+                      loggedIn ? "/wishlist" : "/authentication/login"
+                    )
+                  }
+                  className={`tp-mobile-item-btn ${
+                    activeMenu === "wishlist" ? "active" : ""
+                  }`}
+                >
+                  {activeMenu === "wishlist" ? <FaHeart /> : <FaRegHeart />}
+                  <span>Wishlist</span>
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="col">
-            <MobileSearch />
-          </div>
-          <div className="col">
-            <div className="tp-mobile-item text-center">
-              <button
-                onClick={() => handleMenuClick("profile", "/profile")}
-                className={`tp-mobile-item-btn ${ activeMenu === "profile" ? "active" : "" }`}>
-                {activeMenu === "profile" ? <FaUser /> : <FaRegUser />}
-                <span>Account</span>
-              </button>
+            <div className="col">
+              <MobileSearch />
             </div>
-          </div>
-          <div className="col">
-            <div className="tp-mobile-item text-center">
-              <button
-                onClick={() =>
-                  handleMenuClick(
-                    "cart",
-                    loggedIn ? "/cart" : "/authentication/login"
-                  )
-                }
-                className={`tp-mobile-item-btn ${ activeMenu === "cart" ? "active" : ""}`}>
-                {activeMenu === "cart" ? <BsHandbagFill /> : <BsHandbag />}
-                <span className="tp-header-action-badge mobilecart">
-                  {cartItems.length ? cartItems.length : 0}
-                </span>
-                <span>Cart</span>
-              </button>
+            <div className="col">
+              <div className="tp-mobile-item text-center">
+                <button
+                  onClick={() => handleMenuClick("profile", "/profile")}
+                  className={`tp-mobile-item-btn ${
+                    activeMenu === "profile" ? "active" : ""
+                  }`}
+                >
+                  {activeMenu === "profile" ? <FaUser /> : <FaRegUser />}
+                  <span>Account</span>
+                </button>
+              </div>
+            </div>
+            <div className="col">
+              <div className="tp-mobile-item text-center">
+                <button
+                  onClick={() =>
+                    handleMenuClick(
+                      "cart",
+                      loggedIn ? "/cart" : "/authentication/login"
+                    )
+                  }
+                  className={`tp-mobile-item-btn ${
+                    activeMenu === "cart" ? "active" : ""
+                  }`}
+                >
+                  {activeMenu === "cart" ? <BsHandbagFill /> : <BsHandbag />}
+                  <span className="tp-header-action-badge mobilecart">
+                    {cartItems.length ? cartItems.length : 0}
+                  </span>
+                  <span>Cart</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
       <header>
         <div className="tp-header-area tp-header-style-darkRed tp-header-height">
-          <div id="header-sticky" className="tp-header-bottom-2 tp-header-sticky">
+          <div
+            id="header-sticky"
+            className="tp-header-bottom-2 tp-header-sticky"
+          >
             <div className="container-fluid">
               <div className="tp-mega-menu-wrapper p-relative">
                 <div className="row align-items-center">
                   <div className="col-xl-2 col-lg-5 col-md-5 col-sm-4 col-6">
                     <div className="logo">
-                      <button onClick={() => router.push("/")} className="d-flex align-items-center gap-2">
+                      <button
+                        onClick={() => router.push("/")}
+                        className="d-flex align-items-center gap-2"
+                      >
                         <img src="/assets/img/logo/logo.png" alt="logo" />
                         <span>
                           <strong>Aljeco</strong>{" "}
@@ -133,10 +157,16 @@ export default function Header() {
                       <nav className="tp-main-menu-content">
                         <ul>
                           <li>
-                            <button onClick={() => router.push("/men")}>Mens</button>
+                            <button onClick={() => router.push("/men")}>
+                              Mens
+                            </button>
                           </li>
                           <li>
-                            <button onClick={() => router.push("/wholesale-order")}>Wholesale  Order</button>
+                            <button
+                              onClick={() => router.push("/wholesale-order")}
+                            >
+                              Wholesale Order
+                            </button>
                           </li>
                         </ul>
                       </nav>
@@ -154,7 +184,10 @@ export default function Header() {
                       </div>
                       <div className="tp-header-action d-flex align-items-center gap-xl-3 ms-xl-5">
                         <div className="tp-header-action-item d-none d-lg-block">
-                          <button onClick={() => router.push("/wishlist")} className="tp-header-action-btn">
+                          <button
+                            onClick={() => router.push("/wishlist")}
+                            className="tp-header-action-btn"
+                          >
                             <FaRegHeart />
                             <span className="tp-header-action-badge">
                               {wishListItems.length ? wishListItems.length : 0}
@@ -165,7 +198,10 @@ export default function Header() {
                           <MobileMenus />
                         </div>
                         <div className="tp-header-action-item d-none d-xl-block">
-                          <button onClick={() => router.push("/cart")} className="tp-header-action-btn cartmini-open-btn">
+                          <button
+                            onClick={() => router.push("/cart")}
+                            className="tp-header-action-btn cartmini-open-btn"
+                          >
                             <BsHandbag />
                             <span className="tp-header-action-badge">
                               {cartItems.length ? cartItems.length : 0}
@@ -177,11 +213,15 @@ export default function Header() {
                         ) : (
                           <div className="tp-header-action-item">
                             <button
-                              onClick={() => router.push("/authentication/login")}
+                              onClick={() =>
+                                router.push("/authentication/login")
+                              }
                               className="d-flex align-items-center btn btn-primary"
                             >
                               <MdLogin style={{ fontSize: "18px" }} />{" "}
-                              <span className="ps-1 d-none d-md-block">Login</span>
+                              <span className="ps-1 d-none d-md-block">
+                                Login
+                              </span>
                             </button>
                           </div>
                         )}

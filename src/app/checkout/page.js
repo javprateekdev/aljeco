@@ -1,16 +1,16 @@
 "use client";
+
 import React, { useEffect, useContext, useState } from "react";
 import axios from "axios";
-import { CartContext } from "../../context/cartContext";
+import { CartContext } from "../../context/CartContext";
 import { apiUrl } from "../api";
 
 const CheckoutPage = () => {
-  const { cartItems, fetchCart } = useContext(CartContext);
+  const { cartItems } = useContext(CartContext);
   const [user, setUser] = useState({});
   const [discountAmount, setDiscountAmount] = useState(0);
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(0);
-  console.log("selectedAddress", selectedAddress);
   const [newAddress, setNewAddress] = useState({
     addressLine1: "",
     city: "",
@@ -19,20 +19,32 @@ const CheckoutPage = () => {
     country: "",
     isDefault: false,
   });
+  const [token, setToken] = useState("");
   const [orderid, setOrderId] = useState(0);
   const [couponCode, setCouponCode] = useState("");
   const [message, setMessage] = useState("");
   const [discountDetails, setDiscountDetails] = useState(null);
 
   useEffect(() => {
-    fetchUser();
+    const fetchData = async () => {
+      await fetchUser();
+    };
+    fetchData();
   }, []);
 
-  useEffect(() => {
+ useEffect(() => {
+  const fetchAddresses = async () => {
     if (user.id) {
-      fetchUserAddresses();
+      await fetchUserAddresses();
     }
-  }, [user]);
+  };
+  fetchAddresses();
+}, [user]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
 
   const handleCouponCodeChange = (event) => {
     setCouponCode(event.target.value);
@@ -41,7 +53,6 @@ const CheckoutPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${apiUrl}/payments/check`,
         {
@@ -75,10 +86,12 @@ const CheckoutPage = () => {
   };
 
   const calculateDiscountAmount = () => {
-    const subtotal = cartItems.reduce(
-      (total, item) => total + item.productItem.salePrice * item.quantity,
-      0
-    );
+    const subtotal =
+      cartItems &&
+      cartItems.reduce(
+        (total, item) => total + item.productItem.salePrice * item.quantity,
+        0
+      );
 
     if (discountDetails) {
       if (discountDetails.discountType === "PERCENTAGE") {
@@ -91,7 +104,6 @@ const CheckoutPage = () => {
   };
 
   const fetchUser = async () => {
-    const token = localStorage.getItem("token");
     const response = await axios.get(`${apiUrl}/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -101,7 +113,6 @@ const CheckoutPage = () => {
   };
 
   const fetchUserAddresses = async () => {
-    const token = localStorage.getItem("token");
     const response = await axios.get(`${apiUrl}/users/addresses/${user.id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -111,7 +122,6 @@ const CheckoutPage = () => {
   };
 
   const handleAddNewAddress = async () => {
-    const token = localStorage.getItem("token");
     const response = await axios.post(
       `${apiUrl}/users/${user.id}/address`,
       { ...newAddress, userId: user.id },
@@ -133,10 +143,12 @@ const CheckoutPage = () => {
   };
 
   const calculateTotalAmount = () => {
-    const subtotal = cartItems.reduce(
-      (total, item) => total + item.productItem.salePrice * item.quantity,
-      0
-    );
+    const subtotal =
+      cartItems &&
+      cartItems.reduce(
+        (total, item) => total + item.productItem.salePrice * item.quantity,
+        0
+      );
     const discount = calculateDiscountAmount();
     return subtotal - discount; // Subtract the recalculated discount from subtotal
   };
@@ -156,7 +168,6 @@ const CheckoutPage = () => {
     razorpay_signature
   ) => {
     try {
-      const token = localStorage.getItem("token");
       const data = {
         id: orderid,
         razorpay_order_id: razorpay_order_id,
@@ -179,7 +190,6 @@ const CheckoutPage = () => {
       alert("Razorpay SDK failed to load");
       return;
     }
-    const token = localStorage.getItem("token");
     const receiptId = `receipt#${Date.now()}-${Math.floor(
       Math.random() * 1000
     )}`;
@@ -418,17 +428,19 @@ const CheckoutPage = () => {
                 <h3>Your Order</h3>
                 <div className="tp-order-info-list">
                   <ul>
-                    {cartItems.map((item) => (
-                      <li
-                        className="tp-order-info-list-header"
-                        key={item.productItem.id}
-                      >
-                        {item.productItem.product.productName} x {item.quantity}{" "}
-                        <span>
-                          ₹{item.productItem.salePrice * item.quantity}
-                        </span>
-                      </li>
-                    ))}
+                    {cartItems &&
+                      cartItems.map((item) => (
+                        <li
+                          className="tp-order-info-list-header"
+                          key={item.productItem.id}
+                        >
+                          {item.productItem.product.productName} x{" "}
+                          {item.quantity}{" "}
+                          <span>
+                            ₹{item.productItem.salePrice * item.quantity}
+                          </span>
+                        </li>
+                      ))}
                   </ul>
                 </div>
 

@@ -130,7 +130,7 @@ const SignUp = () => {
     if (token) {
       router.push("/");
     }
-  }, []);
+  }, [router]);
 
   return (
     <section className="tp-login-area p-relative z-index-1 fix pt-100 pb-50">
