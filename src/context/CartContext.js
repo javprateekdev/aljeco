@@ -1,8 +1,8 @@
 "use client";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState } from "react";
 import axios from "axios";
 import { apiUrl } from "@/app/api";
-import { toast } from "react-toastify";
+import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Create the context

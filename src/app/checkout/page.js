@@ -6,7 +6,6 @@ import { apiUrl } from "../api";
 
 const CheckoutPage = () => {
   const { cartItems, fetchCart } = useContext(CartContext);
-  const [discountCode, setDiscountCode] = useState("");
   const [user, setUser] = useState({});
   const [discountAmount, setDiscountAmount] = useState(0);
   const [addresses, setAddresses] = useState([]);
@@ -43,7 +42,7 @@ const CheckoutPage = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        `${apiUrl}/payments/check`, // Assuming you have an endpoint to validate the coupon
+        `${apiUrl}/payments/check`,
         {
           couponCode,
         },
@@ -56,19 +55,17 @@ const CheckoutPage = () => {
       );
 
       if (response.data.valid) {
-        setMessage("Coupon applied successfully.");
+        setMessage(response.data.message);
         setDiscountDetails({
           discountType: response.data.discountType,
           discountValue: response.data.discountValue,
         });
-
-        // Apply discount directly to the amount
-        const discount = calculateDiscountAmount();
-        setDiscountAmount(discount);
+        const discount = calculateDiscountAmount(); // Calculate discount amount
+        setDiscountAmount(discount); // Update discount amount state
       } else {
         setMessage(response.data.message || "Invalid coupon code.");
         setDiscountDetails(null);
-        setDiscountAmount(0); // Reset the discount amount if the coupon is invalid
+        setDiscountAmount(0); // Reset to 0 for invalid coupon
       }
     } catch (error) {
       setMessage("An error occurred while validating the coupon.");
@@ -139,7 +136,7 @@ const CheckoutPage = () => {
       (total, item) => total + item.productItem.salePrice * item.quantity,
       0
     );
-    const discount = calculateDiscountAmount(); // Recalculate the discount here
+    const discount = calculateDiscountAmount();
     return subtotal - discount; // Subtract the recalculated discount from subtotal
   };
   const loadRazorpayScript = () => {
@@ -186,13 +183,15 @@ const CheckoutPage = () => {
       Math.random() * 1000
     )}`;
 
-    const totalAmount = calculateTotalAmount(); // Use the updated total amount after discount
+    const totalAmount = calculateTotalAmount();
+
     const orderData = await axios.post(
       `${apiUrl}/payments/create-order`,
       {
         amount: totalAmount,
         receipt: receiptId,
         coupon: couponCode,
+        addressId: selectedAddress,
       },
       {
         headers: {
@@ -201,6 +200,7 @@ const CheckoutPage = () => {
         },
       }
     );
+
     setOrderId(orderData.data.order);
     const options = {
       key: "rzp_test_c1efGTJCYwaUBg",
@@ -230,24 +230,23 @@ const CheckoutPage = () => {
 
   return (
     <>
-
-
       <section className="breadcrumb__area include-bg inbreadcrumb bg-light ">
-         <div className="container">
-            <div className="row">
-               <div className="col-xxl-12">
-                  <div className="breadcrumb__content p-relative z-index-1">
-                     <h3 className="breadcrumb__title">Checkout</h3>
-                     <div className="breadcrumb__list">
-                        <span><a href="#">Home</a></span>
-                        <span>Checkout</span>
-                     </div>
-                  </div>
-               </div>
+        <div className="container">
+          <div className="row">
+            <div className="col-xxl-12">
+              <div className="breadcrumb__content p-relative z-index-1">
+                <h3 className="breadcrumb__title">Checkout</h3>
+                <div className="breadcrumb__list">
+                  <span>
+                    <a href="#">Home</a>
+                  </span>
+                  <span>Checkout</span>
+                </div>
+              </div>
             </div>
-         </div>
+          </div>
+        </div>
       </section>
-
 
       <section className="tp-checkout-area py-4">
         <div className="container">
@@ -259,7 +258,10 @@ const CheckoutPage = () => {
                   <h4>Select an Address</h4>
                   {addresses &&
                     addresses.map((address) => (
-                      <label key={address.id} className="custom-radio-container">
+                      <label
+                        key={address.id}
+                        className="custom-radio-container"
+                      >
                         <input
                           type="radio"
                           value={address.id}
@@ -269,17 +271,17 @@ const CheckoutPage = () => {
                         <span className="custom-radio"></span>
                         <div className="address-details">
                           <div className="name">
-                            <span>Sunil Kumar yadav</span>
+                            <span>{`${user.firstname}  ${user?.lastname}`}</span>
                           </div>
                           <div>
-                            {address.addressLine1}, {address.city}, {address.state} - {address.postalCode}, {address.country}
+                            {address.addressLine1}, {address.city},{" "}
+                            {address.state} - {address.postalCode},{" "}
+                            {address.country}
                           </div>
                         </div>
                       </label>
                     ))}
                 </div>
-
-
 
                 <h4>Add New Address</h4>
                 <div className="tp-checkout-bill-form">
@@ -288,114 +290,115 @@ const CheckoutPage = () => {
                       <div className="row">
                         <div className="col-md-6">
                           <div className="tp-checkout-input">
-                              <label>First Name</label>
-                              <input
-                                type="text"
-                                placeholder="First Name"
-                              />
+                            <label>First Name</label>
+                            <input type="text" placeholder="First Name" />
                           </div>
                         </div>
                         <div className="col-md-6">
                           <div className="tp-checkout-input">
-                              <label>Last Name</label>
-                              <input
-                                type="text"
-                                placeholder="Last Name"
-                              />
+                            <label>Last Name</label>
+                            <input type="text" placeholder="Last Name" />
                           </div>
                         </div>
                         <div className="col-md-6">
                           <div className="tp-checkout-input">
-                              <label>Email</label>
-                              <input
-                                type="text"
-                                placeholder="Email"
-                              />
+                            <label>Email</label>
+                            <input type="text" placeholder="Email" />
                           </div>
                         </div>
                         <div className="col-md-6">
                           <div className="tp-checkout-input">
-                              <label>Phone</label>
-                              <input
-                                type="text"
-                                placeholder="Phone"
-                              />
+                            <label>Phone</label>
+                            <input type="text" placeholder="Phone" />
                           </div>
                         </div>
                         <div className="col-md-12">
                           <div className="tp-checkout-input">
-                              <label>Address Line 1</label>
-                              <input
-                                type="text"
-                                placeholder="Address Line 1"
-                                value={newAddress.addressLine1}
-                                onChange={(e) =>
-                                  setNewAddress({
-                                    ...newAddress,
-                                    addressLine1: e.target.value,
-                                  })
-                                }
-                              />
+                            <label>Address Line 1</label>
+                            <input
+                              type="text"
+                              placeholder="Address Line 1"
+                              value={newAddress.addressLine1}
+                              onChange={(e) =>
+                                setNewAddress({
+                                  ...newAddress,
+                                  addressLine1: e.target.value,
+                                })
+                              }
+                            />
                           </div>
                         </div>
                         <div className="col-md-6">
                           <div className="tp-checkout-input">
                             <label>City</label>
                             <input
-                                type="text"
-                                placeholder="City"
-                                value={newAddress.city}
-                                onChange={(e) =>
-                                  setNewAddress({ ...newAddress, city: e.target.value })
-                                }
-                              />
+                              type="text"
+                              placeholder="City"
+                              value={newAddress.city}
+                              onChange={(e) =>
+                                setNewAddress({
+                                  ...newAddress,
+                                  city: e.target.value,
+                                })
+                              }
+                            />
                           </div>
                         </div>
                         <div className="col-md-6">
                           <div className="tp-checkout-input">
-                              <label>State</label>
-                              <input
-                                  type="text"
-                                  placeholder="State"
-                                  value={newAddress.state}
-                                  onChange={(e) =>
-                                    setNewAddress({ ...newAddress, state: e.target.value })
-                                  }
-                                />
+                            <label>State</label>
+                            <input
+                              type="text"
+                              placeholder="State"
+                              value={newAddress.state}
+                              onChange={(e) =>
+                                setNewAddress({
+                                  ...newAddress,
+                                  state: e.target.value,
+                                })
+                              }
+                            />
                           </div>
                         </div>
                         <div className="col-md-6">
                           <div className="tp-checkout-input">
                             <label>Postal Code</label>
                             <input
-                                type="text"
-                                placeholder="Postal Code"
-                                value={newAddress.postalCode}
-                                onChange={(e) =>
-                                  setNewAddress({
-                                    ...newAddress,
-                                    postalCode: e.target.value,
-                                  })
-                                }
-                              />
+                              type="text"
+                              placeholder="Postal Code"
+                              value={newAddress.postalCode}
+                              onChange={(e) =>
+                                setNewAddress({
+                                  ...newAddress,
+                                  postalCode: e.target.value,
+                                })
+                              }
+                            />
                           </div>
                         </div>
                         <div className="col-md-6">
                           <div className="tp-checkout-input">
                             <label>Country</label>
                             <input
-                                type="text"
-                                placeholder="Country"
-                                value={newAddress.country}
-                                onChange={(e) =>
-                                  setNewAddress({ ...newAddress, country: e.target.value })
-                                }
-                              />
+                              type="text"
+                              placeholder="Country"
+                              value={newAddress.country}
+                              onChange={(e) =>
+                                setNewAddress({
+                                  ...newAddress,
+                                  country: e.target.value,
+                                })
+                              }
+                            />
                           </div>
                         </div>
                       </div>
                     </div>
-                    <button className="btn btn-primary " type="button" onClick={handleAddNewAddress}>
+                    <button
+                      className="btn btn-primary "
+                      type="button"
+                      onClick={handleAddNewAddress}
+                    >
                       Add Address
                     </button>
                   </form>
@@ -403,35 +406,50 @@ const CheckoutPage = () => {
               </div>
             </div>
             <div className="col-lg-5">
-              <div className="tp-checkout-place white-bg" >
+              <div className="tp-checkout-place white-bg">
                 <h3>Your Order</h3>
                 <div className="tp-order-info-list">
                   <ul>
                     {cartItems.map((item) => (
-                      <li className="tp-order-info-list-header" key={item.productItem.id}>
-                        {item.productItem.name} x {item.quantity}{" "}
-                        <span>₹{item.productItem.salePrice * item.quantity}</span>
+                      <li
+                        className="tp-order-info-list-header"
+                        key={item.productItem.id}
+                      >
+                        {item.productItem.product.productName} x {item.quantity}{" "}
+                        <span>
+                          ₹{item.productItem.salePrice * item.quantity}
+                        </span>
                       </li>
                     ))}
                   </ul>
                 </div>
 
-                <p>Discount: ₹{discountAmount}</p>
+                <p>Discount: ₹{calculateTotalAmount()}</p>
                 <p>Total Amount: ₹{calculateTotalAmount()}</p>
                 <form onSubmit={handleSubmit}>
                   <div className="d-flex mb-10">
-                      <input
-                          type="text"
-                          placeholder="Coupon Code"
-                          value={couponCode}
-                          onChange={handleCouponCodeChange}
-                          className="coupaninput"
-                        />
-                        <button className="btn btn-success applycoupan" type="submit">Apply Coupon</button>
+                    <input
+                      type="text"
+                      placeholder="Coupon Code"
+                      value={couponCode}
+                      onChange={handleCouponCodeChange}
+                      className="coupaninput"
+                    />
+                    <button
+                      className="btn btn-success applycoupan"
+                      type="submit"
+                    >
+                      Apply Coupon
+                    </button>
                   </div>
                 </form>
-                <button className="btn btn-primary mt-20" onClick={handlePayment}>Place Order</button>
                 {message && <p>{message}</p>}
+                <button
+                  className="btn btn-primary mt-20"
+                  onClick={handlePayment}
+                >
+                  Place Order
+                </button>
               </div>
             </div>
           </div>

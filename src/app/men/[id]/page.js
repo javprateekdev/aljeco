@@ -9,7 +9,9 @@ import Customize from "./Customize";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Reviews from "../reviews";
-
+import Loader from "@/app/utils/loader";
+import { toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const ProductDetails = ({ params }) => {
   const { id } = params; // Getting the product id from the route parameters
   const [product, setProduct] = useState({});
@@ -26,7 +28,6 @@ const ProductDetails = ({ params }) => {
 
     // Ensure product data is loaded before proceeding
     if (!product?.productItems || !product?.productItems[0]) {
-      alert("Product data is not available!");
       return;
     }
 
@@ -34,7 +35,9 @@ const ProductDetails = ({ params }) => {
     const data = {
       productItemId: product.productItems[0].itemId, // Use the first product item for demo
       quantity: 1, // Set default quantity to 1
-      priceAtTime: product.productItems[0].salePrice || product.productItems[0].originalPrice, // Get the current price
+      priceAtTime:
+        product.productItems[0].salePrice ||
+        product.productItems[0].originalPrice, // Get the current price
     };
 
     try {
@@ -47,7 +50,18 @@ const ProductDetails = ({ params }) => {
 
       // Handle success
       if (response.status === 201) {
-        alert("Item added to cart successfully!");
+        toast.success("Item Added To the Cart!", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error adding item to cart:", error);
@@ -69,7 +83,7 @@ const ProductDetails = ({ params }) => {
       });
   }, [id]); // Dependency array to trigger this effect when the `id` changes
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loader />;
 
   return (
     <>
@@ -99,7 +113,9 @@ const ProductDetails = ({ params }) => {
                 </div>
                 <div className="tp-product-details-price-wrapper mb-20">
                   <p className="tp-product-details-price new-price mb-0">
-                    ₹{product?.productItems[0]?.salePrice || product?.productItems[0]?.originalPrice}
+                    ₹
+                    {product?.productItems[0]?.salePrice ||
+                      product?.productItems[0]?.originalPrice}
                   </p>
                   <span>MRP inclusive of all taxes</span>
                 </div>
@@ -159,9 +175,7 @@ const ProductDetails = ({ params }) => {
       </section>
       <hr />
 
-
-      <Reviews/>
-
+      <Reviews />
 
       <RelatedProducts />
     </>
