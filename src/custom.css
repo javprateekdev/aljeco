@@ -261,3 +261,60 @@ span.swiper-pagination-bullet {
 .coupaninput{
     border-radius: 5px 0px 0px 5px !important;
 }
+
+.labeldisplaliststyle {
+    display: block;
+}
+
+
+
+
+/* custom radio */
+.custom-radio-container {
+    display: flex;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  
+  .custom-radio-container input[type="radio"] {
+    display: none; /* Hide the default radio button */
+  }
+  
+  .custom-radio {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid var(--tp-theme-primary);
+    margin-right: 10px;
+    position: relative;
+    display: inline-block;
+  }
+  
+  .custom-radio-container input[type="radio"]:checked + .custom-radio {
+    background-color: var(--tp-theme-primary);
+  }
+  
+  .custom-radio-container input[type="radio"]:checked + .custom-radio::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: #fff;
+  }
+  
+  .address-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: -5px;
+  }
+  
+  .address-details .name {
+    font-weight: bold;
+  }
+
+  .tp-checkout-place{
+    background-color: #fff !important;
+  }

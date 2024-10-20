@@ -232,7 +232,7 @@ const CheckoutPage = () => {
     <>
 
 
-    <section className="breadcrumb__area include-bg inbreadcrumb ">
+      <section className="breadcrumb__area include-bg inbreadcrumb bg-light ">
          <div className="container">
             <div className="row">
                <div className="col-xxl-12">
@@ -249,41 +249,79 @@ const CheckoutPage = () => {
       </section>
 
 
-      <section
-        className="tp-checkout-area py-4 "
-        style={{ background: "#EFF1F5" }}
-      >
+      <section className="tp-checkout-area py-4">
         <div className="container">
           <div className="row">
             <div className="col-lg-7">
               <div className="tp-checkout-bill-area">
                 <h3 className="tp-checkout-bill-title">Billing Details</h3>
-
                 <div className="tp-address-list">
                   <h4>Select an Address</h4>
                   {addresses &&
                     addresses.map((address) => (
-                      <div key={address.id}>
+                      <label key={address.id} className="custom-radio-container">
                         <input
                           type="radio"
                           value={address.id}
                           checked={selectedAddress === address.id}
                           onChange={() => setSelectedAddress(address.id)}
                         />
-                        <label>
-                          {address.addressLine1}, {address.city},{" "}
-                          {address.state} - {address.postalCode},{" "}
-                          {address.country}
-                        </label>
-                      </div>
+                        <span className="custom-radio"></span>
+                        <div className="address-details">
+                          <div className="name">
+                            <span>Sunil Kumar yadav</span>
+                          </div>
+                          <div>
+                            {address.addressLine1}, {address.city}, {address.state} - {address.postalCode}, {address.country}
+                          </div>
+                        </div>
+                      </label>
                     ))}
                 </div>
+
+
 
                 <h4>Add New Address</h4>
                 <div className="tp-checkout-bill-form">
                   <form>
                     <div className="tp-checkout-bill-inner">
                       <div className="row">
+                        <div className="col-md-6">
+                          <div className="tp-checkout-input">
+                              <label>First Name</label>
+                              <input
+                                type="text"
+                                placeholder="First Name"
+                              />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="tp-checkout-input">
+                              <label>Last Name</label>
+                              <input
+                                type="text"
+                                placeholder="Last Name"
+                              />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="tp-checkout-input">
+                              <label>Email</label>
+                              <input
+                                type="text"
+                                placeholder="Email"
+                              />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="tp-checkout-input">
+                              <label>Phone</label>
+                              <input
+                                type="text"
+                                placeholder="Phone"
+                              />
+                          </div>
+                        </div>
                         <div className="col-md-12">
                           <div className="tp-checkout-input">
                               <label>Address Line 1</label>
@@ -365,16 +403,19 @@ const CheckoutPage = () => {
               </div>
             </div>
             <div className="col-lg-5">
-              <div className="tp-checkout-order-details">
+              <div className="tp-checkout-place white-bg" >
                 <h3>Your Order</h3>
-                <ul>
-                  {cartItems.map((item) => (
-                    <li key={item.productItem.id}>
-                      {item.productItem.name} x {item.quantity}{" "}
-                      <span>₹{item.productItem.salePrice * item.quantity}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="tp-order-info-list">
+                  <ul>
+                    {cartItems.map((item) => (
+                      <li className="tp-order-info-list-header" key={item.productItem.id}>
+                        {item.productItem.name} x {item.quantity}{" "}
+                        <span>₹{item.productItem.salePrice * item.quantity}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
                 <p>Discount: ₹{discountAmount}</p>
                 <p>Total Amount: ₹{calculateTotalAmount()}</p>
                 <form onSubmit={handleSubmit}>
@@ -389,7 +430,7 @@ const CheckoutPage = () => {
                         <button className="btn btn-success applycoupan" type="submit">Apply Coupon</button>
                   </div>
                 </form>
-                <button className="btn btn-primary" onClick={handlePayment}>Place Order</button>
+                <button className="btn btn-primary mt-20" onClick={handlePayment}>Place Order</button>
                 {message && <p>{message}</p>}
               </div>
             </div>

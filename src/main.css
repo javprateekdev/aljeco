@@ -23373,7 +23373,7 @@ only screen and (min-width: 576px) and (max-width: 767px),
 
 .tp-checkout-bill-area {
 	padding: 45px 40px 24px;
-	background-color: var(--tp-common-white);
+	background-color:#fff;
 }
 
 @media (max-width: 575px) {
