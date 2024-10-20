@@ -73,7 +73,7 @@ const Footer = () => {
                                                 </span>
                                                 </div>
                                                 <div className="tp-footer-contact-content">
-                                                <p><a href="#" target="_blank">Fatyahbad road Agra</a></p>
+                                                <p><a href="#" target="_blank">Fatehabad Rd,Agra</a></p>
                                                 </div>
                                             </div>
                                         </div>

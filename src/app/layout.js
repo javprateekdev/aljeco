@@ -5,6 +5,9 @@ import Head from "next/head";
 import { FilterProvider } from "../context/FilterContext";
 import { CartProvider } from "../context/cartContext";
 import { WishListProvider } from "../context/WishListContext";
+import { ToastContainer, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -20,6 +23,19 @@ export default function RootLayout({ children }) {
       </Head>
       <body className={inter.className}>
         <WishListProvider>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+            transition={Bounce} // Correct prop assignment for transition
+          />
           <CartProvider>
             <FilterProvider>
               <Header />

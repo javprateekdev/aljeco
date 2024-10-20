@@ -1,10 +1,147 @@
 "use client";
 import React, { useEffect, useContext, useState } from "react";
-import { apiUrl } from "../api";
 import axios from "axios";
 import { CartContext } from "../../context/cartContext";
-const page = () => {
+import { apiUrl } from "../api";
+
+const CheckoutPage = () => {
   const { cartItems, fetchCart } = useContext(CartContext);
+  const [discountCode, setDiscountCode] = useState("");
+  const [user, setUser] = useState({});
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [newAddress, setNewAddress] = useState({
+    addressLine1: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "",
+    isDefault: false,
+  });
+  const [orderid, setOrderId] = useState(0);
+  const [couponCode, setCouponCode] = useState("");
+  const [message, setMessage] = useState("");
+  const [discountDetails, setDiscountDetails] = useState(null);
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (user.id) {
+      fetchUserAddresses();
+    }
+  }, [user]);
+
+  const handleCouponCodeChange = (event) => {
+    setCouponCode(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        `${apiUrl}/payments/check`, // Assuming you have an endpoint to validate the coupon
+        {
+          couponCode,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.valid) {
+        setMessage("Coupon applied successfully.");
+        setDiscountDetails({
+          discountType: response.data.discountType,
+          discountValue: response.data.discountValue,
+        });
+
+        // Apply discount directly to the amount
+        const discount = calculateDiscountAmount();
+        setDiscountAmount(discount);
+      } else {
+        setMessage(response.data.message || "Invalid coupon code.");
+        setDiscountDetails(null);
+        setDiscountAmount(0); // Reset the discount amount if the coupon is invalid
+      }
+    } catch (error) {
+      setMessage("An error occurred while validating the coupon.");
+      console.error(error);
+    }
+  };
+
+  const calculateDiscountAmount = () => {
+    const subtotal = cartItems.reduce(
+      (total, item) => total + item.productItem.salePrice * item.quantity,
+      0
+    );
+
+    if (discountDetails) {
+      if (discountDetails.discountType === "PERCENTAGE") {
+        return (subtotal * discountDetails.discountValue) / 100;
+      } else if (discountDetails.discountType === "FLAT") {
+        return discountDetails.discountValue;
+      }
+    }
+    return 0;
+  };
+
+  const fetchUser = async () => {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${apiUrl}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setUser(response.data);
+  };
+
+  const fetchUserAddresses = async () => {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(`${apiUrl}/users/addresses/${user.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setAddresses(response.data[0].Address);
+  };
+
+  const handleAddNewAddress = async () => {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(
+      `${apiUrl}/users/${user.id}/address`,
+      { ...newAddress, userId: user.id },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setAddresses([...addresses, response.data]);
+    setNewAddress({
+      addressLine1: "",
+      city: "",
+      state: "",
+      postalCode: "",
+      country: "",
+      isDefault: false,
+    });
+  };
+
+  const calculateTotalAmount = () => {
+    const subtotal = cartItems.reduce(
+      (total, item) => total + item.productItem.salePrice * item.quantity,
+      0
+    );
+    const discount = calculateDiscountAmount(); // Recalculate the discount here
+    return subtotal - discount; // Subtract the recalculated discount from subtotal
+  };
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -15,85 +152,85 @@ const page = () => {
     });
   };
 
+  const verifyPayment = async (
+    razorpay_payment_id,
+    razorpay_order_id,
+    razorpay_signature
+  ) => {
+    try {
+      const token = localStorage.getItem("token");
+      const data = {
+        id: orderid,
+        razorpay_order_id: razorpay_order_id,
+        razorpay_payment_id: razorpay_payment_id,
+        razorpay_signature: razorpay_signature,
+      };
+      await axios.post(`${apiUrl}/payments/verify-payment`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handlePayment = async () => {
-    console.log("order created");
     const isLoaded = await loadRazorpayScript();
     if (!isLoaded) {
       alert("Razorpay SDK failed to load");
       return;
     }
     const token = localStorage.getItem("token");
-    // Create order on backend
     const receiptId = `receipt#${Date.now()}-${Math.floor(
       Math.random() * 1000
     )}`;
 
-    const totalAmount = cartItems.reduce(
-      (total, item) => total + item.productItem.salePrice * item.quantity,
-      0
-    );
+    const totalAmount = calculateTotalAmount(); // Use the updated total amount after discount
     const orderData = await axios.post(
       `${apiUrl}/payments/create-order`,
       {
-        amount: totalAmount ,
+        amount: totalAmount,
         receipt: receiptId,
+        coupon: couponCode,
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`, // Include the Bearer token here
-          "Content-Type": "application/json", // Ensure proper content type
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
       }
     );
+    setOrderId(orderData.data.order);
     const options = {
       key: "rzp_test_c1efGTJCYwaUBg",
       amount: orderData.amount,
       currency: orderData.currency,
       name: "Aljeco",
       description: "Clothing Brand",
-      order_id: orderData.id,
+      order_id: orderData.data.razorpayOrderId,
       handler: async function (response) {
-        // Handle success, like verifying the payment on your backend
-        console.log("Payment successful:", response);
-        console.log("Payment successful:", response);
-
         const { razorpay_payment_id, razorpay_order_id, razorpay_signature } =
           response;
-        console.log(razorpay_payment_id, razorpay_order_id, razorpay_signature);
+        verifyPayment(
+          razorpay_payment_id,
+          razorpay_order_id,
+          razorpay_signature
+        );
       },
       prefill: {
-        name: "Your Name",
-        email: "your_email@example.com",
-        contact: "9999999999",
+        name: user.firstName || "Your Name",
+        email: user.email || "your_email@example.com",
+        contact: user.phone || "9999999999",
       },
     };
 
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
+
   return (
     <>
-      <section
-        className="breadcrumb__area include-bg pt-95 pb-50"
-        style={{ background: "#EFF1F5" }}
-      >
-        <div className="container">
-          <div className="row">
-            <div className="col-xxl-12">
-              <div className="breadcrumb__content p-relative z-index-1">
-                <h3 className="breadcrumb__title">Checkout</h3>
-                <div className="breadcrumb__list">
-                  <span>
-                    <a href="#">Home</a>
-                  </span>
-                  <span>Checkout</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section
         className="tp-checkout-area pb-120"
         style={{ background: "#EFF1F5" }}
@@ -103,227 +240,105 @@ const page = () => {
             <div className="col-lg-7">
               <div className="tp-checkout-bill-area">
                 <h3 className="tp-checkout-bill-title">Billing Details</h3>
-                <div className="tp-checkout-bill-form">
-                  <form action="#">
-                    <div className="tp-checkout-bill-inner">
-                      <div className="row">
-                        <div className="col-md-6">
-                          <div className="tp-checkout-input">
-                            <label>
-                              First Name <span>*</span>
-                            </label>
-                            <input type="text" placeholder="First Name" />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="tp-checkout-input">
-                            <label>
-                              Last Name <span>*</span>
-                            </label>
-                            <input type="text" placeholder="Last Name" />
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="tp-checkout-input">
-                            <label>Company name (optional)</label>
-                            <input type="text" placeholder="Example LTD." />
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="tp-checkout-input">
-                            <label>Country / Region </label>
-                            <input
-                              type="text"
-                              placeholder="United States (US)"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="tp-checkout-input">
-                            <label>Street address</label>
-                            <input
-                              type="text"
-                              placeholder="House number and street name"
-                            />
-                          </div>
 
-                          <div className="tp-checkout-input">
-                            <input
-                              type="text"
-                              placeholder="Apartment, suite, unit, etc. (optional)"
-                            />
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="tp-checkout-input">
-                            <label>Town / City</label>
-                            <input type="text" placeholder="" />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="tp-checkout-input">
-                            <label>Postcode ZIP</label>
-                            <input type="text" placeholder="" />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="tp-checkout-input">
-                            <label>
-                              Phone <span>*</span>
-                            </label>
-                            <input type="text" placeholder="" />
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="tp-checkout-input">
-                            <label>
-                              Email address <span>*</span>
-                            </label>
-                            <input type="email" placeholder="" />
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="tp-checkout-option-wrapper">
-                            <div className="tp-checkout-option">
-                              <input id="create_free_account" type="checkbox" />
-                              <label for="create_free_account">
-                                Create an account?
-                              </label>
-                            </div>
-                            <div className="tp-checkout-option">
-                              <input
-                                id="ship_to_diff_address"
-                                type="checkbox"
-                              />
-                              <label for="ship_to_diff_address">
-                                Ship to a different address?
-                              </label>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-md-12">
-                          <div className="tp-checkout-input">
-                            <label>Order notes (optional)</label>
-                            <textarea placeholder="Notes about your order, e.g. special notes for delivery."></textarea>
-                          </div>
-                        </div>
+                <div className="tp-address-list">
+                  <h4>Select an Address</h4>
+                  {addresses &&
+                    addresses.map((address) => (
+                      <div key={address.id}>
+                        <input
+                          type="radio"
+                          value={address.id}
+                          checked={selectedAddress === address.id}
+                          onChange={() => setSelectedAddress(address.id)}
+                        />
+                        <label>
+                          {address.addressLine1}, {address.city},{" "}
+                          {address.state} - {address.postalCode},{" "}
+                          {address.country}
+                        </label>
                       </div>
-                    </div>
-                  </form>
+                    ))}
                 </div>
+
+                <h4>Add New Address</h4>
+                <form>
+                  <input
+                    type="text"
+                    placeholder="Address Line 1"
+                    value={newAddress.addressLine1}
+                    onChange={(e) =>
+                      setNewAddress({
+                        ...newAddress,
+                        addressLine1: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="City"
+                    value={newAddress.city}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, city: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="State"
+                    value={newAddress.state}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, state: e.target.value })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Postal Code"
+                    value={newAddress.postalCode}
+                    onChange={(e) =>
+                      setNewAddress({
+                        ...newAddress,
+                        postalCode: e.target.value,
+                      })
+                    }
+                  />
+                  <input
+                    type="text"
+                    placeholder="Country"
+                    value={newAddress.country}
+                    onChange={(e) =>
+                      setNewAddress({ ...newAddress, country: e.target.value })
+                    }
+                  />
+                  <button type="button" onClick={handleAddNewAddress}>
+                    Add Address
+                  </button>
+                </form>
               </div>
             </div>
             <div className="col-lg-5">
-              <div className="tp-checkout-place white-bg">
-                <h3 className="tp-checkout-place-title">Your Order</h3>
-                <div className="tp-order-info-list">
-                  <ul>
-                    <li className="tp-order-info-list-header">
-                      <h4>Product</h4>
-                      <h4>Total</h4>
+              <div className="tp-checkout-order-details">
+                <h3>Your Order</h3>
+                <ul>
+                  {cartItems.map((item) => (
+                    <li key={item.productItem.id}>
+                      {item.productItem.name} x {item.quantity}{" "}
+                      <span>₹{item.productItem.salePrice * item.quantity}</span>
                     </li>
-                    {cartItems.map((item) => (
-                      <li className="tp-order-info-list-desc" key={item.id}>
-                        <p>
-                          {item.productItem.product.productName}
-                          <span> x {item.quantity}</span>{" "}
-                        </p>
-                        <span>
-                          ₹{item.productItem.salePrice * item.quantity}
-                        </span>{" "}
-                        {/* Assuming salePrice is in product */}
-                      </li>
-                    ))}
-
-                    <li className="tp-order-info-list-subtotal">
-                      <span>Subtotal</span>
-                      <span>
-                        {" "}
-                        ₹
-                        {cartItems.reduce(
-                          (total, item) =>
-                            total + item.productItem.salePrice * item.quantity,
-                          0
-                        )}
-                      </span>
-                    </li>
-
-                    <li className="tp-order-info-list-shipping">
-                      <span>
-                        <strong>Shipping</strong>
-                      </span>
-                      <span>
-                        <strong>Free</strong>{" "}
-                      </span>
-                      {/* <div className="tp-order-info-list-shipping-item d-flex flex-column align-items-end">
-                                 <span>
-                                    <input id="free_shipping" type="radio" name="shipping" />
-                                    <label for="free_shipping">Free shipping</label>
-                                 </span>
-                              </div> */}
-                    </li>
-
-                    <li className="tp-order-info-list-total">
-                      <span>Total</span>
-                      <span>
-                        {" "}
-                        ₹
-                        {cartItems.reduce(
-                          (total, item) =>
-                            total + item.productItem.salePrice * item.quantity,
-                          0
-                        )}
-                      </span>
-                    </li>
-                  </ul>
-                </div>
-                <div className="tp-checkout-payment">
-                  {/* <div className="tp-checkout-payment-item">
-                    <input type="radio" id="back_transfer" name="payment" />
-                    <label
-                      for="back_transfer"
-                      data-bs-toggle="direct-bank-transfer"
-                    >
-                      Internet Banking
-                    </label>
-                    <div className="tp-checkout-payment-desc direct-bank-transfer">
-                      <p>
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
-                      </p>
-                    </div>
-                  </div> */}
-                  <div className="tp-checkout-payment-item">
-                    <input type="radio" id="cod" name="payment" />
-                    <label for="cod">Cash on Delivery</label>
-                    <div className="tp-checkout-payment-desc cash-on-delivery">
-                      <p>
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="tp-checkout-payment-item paypal-payment">
-                    <input type="radio" id="paypal" name="payment" />
-                    <label for="paypal">UPI</label>
-                  </div>
-                </div>
-                <div className="tp-checkout-agree">
-                  <div className="tp-checkout-option">
-                    <input id="read_all" type="checkbox" />
-                    <label for="read_all">
-                      I have read and agree to the website.
-                    </label>
-                  </div>
-                </div>
-                <div className="tp-checkout-btn-wrapper">
-                  <button
-                    className="tp-checkout-btn w-100"
-                    onClick={handlePayment}
-                  >
-                    Order Now
-                  </button>
-                </div>
+                  ))}
+                </ul>
+                <p>Discount: ₹{discountAmount}</p>
+                <p>Total Amount: ₹{calculateTotalAmount()}</p>
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    placeholder="Coupon Code"
+                    value={couponCode}
+                    onChange={handleCouponCodeChange}
+                  />
+                  <button type="submit">Apply Coupon</button>
+                </form>
+                <button onClick={handlePayment}>Place Order</button>
+                {message && <p>{message}</p>}
               </div>
             </div>
           </div>
@@ -333,4 +348,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default CheckoutPage;

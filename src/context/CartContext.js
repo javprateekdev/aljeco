@@ -2,12 +2,11 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { apiUrl } from "@/app/api";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Create the context
 export const CartContext = createContext();
-const notify = () => toast("Wow so easy!");
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -23,8 +22,6 @@ export const CartProvider = ({ children }) => {
         },
       });
 
-
-      
       setCartItems(response.data.cartItems);
     } catch (error) {
       console.error("Error fetching cart data:", error);
@@ -41,11 +38,33 @@ export const CartProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
       });
+      toast.success("Item Added To Card!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
       if (response.status === 201) {
-        fetchCart(); // Refetch cart after adding an item
+        fetchCart();
       }
     } catch (error) {
       console.error("Error adding item to cart:", error);
+      toast.success(error.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     }
   };
 

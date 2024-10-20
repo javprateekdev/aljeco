@@ -8,15 +8,20 @@ import axios from "axios";
 import { apiUrl } from "@/app/api";
 import { useRouter } from "next/navigation";
 import { MdLogin } from "react-icons/md";
+import { toast, Bounce } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Loader from "@/app/utils/loader";
 const Login = () => {
-  // State variables
+ 
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   //   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loggedin, setLoggedIn] = useState(false);
-  const [isMounted, setIsMounted] = useState(false); // State to check if component is mounted
+  const [isMounted, setIsMounted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  // State to check if component is mounted
   const router = useRouter();
 
   useEffect(() => {
@@ -32,13 +37,11 @@ const Login = () => {
     }
   }, [loggedin]);
 
-  console.log("email", email);
-  console.log("password", password);
   // Handle login submission
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(""); // Clear previous error
-
+    setLoading(true);
     try {
       // Send POST request to login
       const response = await axios.post(`${apiUrl}/auth/login`, {
@@ -58,13 +61,38 @@ const Login = () => {
       // }
 
       // Redirect or do something after successful login
-      console.log("Login successful", token);
+      toast.success("Login successfully!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      setLoading(false);
     } catch (err) {
       // Handle error
       setError("Login failed. Please check your credentials.");
       console.error("Login error:", err);
+      toast.error(err.message, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      setLoading(false);
     }
   };
+
+  if (loading) return <Loader />;
 
   return (
     <>
@@ -115,7 +143,8 @@ const Login = () => {
                         src="/assets/img/logo/logo.png"
                         alt="logo"
                         style={{ width: "80px" }}
-                      /> <br />
+                      />{" "}
+                      <br />
                       <span className="mt-2 d-block">Aljeco </span>
                     </Link>
                   </h3>
@@ -123,9 +152,7 @@ const Login = () => {
                   <p>
                     Don’t have an account?{" "}
                     <span>
-                      <Link href="/authentication/signup">
-                        Signup
-                      </Link>
+                      <Link href="/authentication/signup">Signup</Link>
                     </span>
                   </p>
                 </div>
@@ -179,7 +206,7 @@ const Login = () => {
                     </div> */}
                     <div className="tp-login-bottom">
                       <button type="submit" className="tp-login-btn w-100">
-                      <MdLogin style={{ fontSize: "18px" }} /> Login
+                        <MdLogin style={{ fontSize: "18px" }} /> Login
                       </button>
                     </div>
                     {error && <p className="text-danger">{error}</p>}{" "}
