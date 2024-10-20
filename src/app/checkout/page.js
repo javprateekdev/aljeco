@@ -9,7 +9,8 @@ const CheckoutPage = () => {
   const [user, setUser] = useState({});
   const [discountAmount, setDiscountAmount] = useState(0);
   const [addresses, setAddresses] = useState([]);
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(0);
+  console.log("selectedAddress", selectedAddress);
   const [newAddress, setNewAddress] = useState({
     addressLine1: "",
     city: "",
@@ -258,33 +259,35 @@ const CheckoutPage = () => {
                   <h4>Select an Address</h4>
                   {addresses &&
                     addresses.map((address) => (
-                      <label
+                      <div
                         key={address.id}
-                        className="custom-radio-container"
+                        className="custom-address-container"
                       >
-                        <input
-                          type="radio"
-                          value={address.id}
-                          checked={selectedAddress === address.id}
-                          onChange={() => setSelectedAddress(address.id)}
-                        />
-                        {/* <span className="custom-radio"></span> */}
                         <div className="address-details">
                           <div>
                             <div className="name">
-                              <span>{`${user.firstname}  ${user?.lastname}`}</span>
+                              <span>{`${user.firstname} ${user.lastname}`}</span>
                             </div>
                             <div>
-                              {address.addressLine1}, {address.city},{" "}
-                              {address.state} - {address.postalCode},{" "}
+                              {address.addressLine1}, {address.city}{" "}
+                              {address.state} - {address.postalCode}{" "}
                               {address.country}
                             </div>
                           </div>
                           <div>
-                            <button className="btn btn-primary">Deliver here</button>
+                            <button
+                              className={`btn ${
+                                selectedAddress === address.id
+                                  ? "btn-success"
+                                  : "btn-primary"
+                              }`}
+                              onClick={() => setSelectedAddress(address.id)}
+                            >
+                              Deliver here
+                            </button>
                           </div>
                         </div>
-                      </label>
+                      </div>
                     ))}
                 </div>
 
