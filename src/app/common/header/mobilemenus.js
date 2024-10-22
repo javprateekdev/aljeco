@@ -35,8 +35,8 @@ const MobileMenus = () => {
                 <Offcanvas.Body>
                     <div className="main-menu menu-style-2">
                         {/* <Nav className="flex-column">
-                            <Link href="/shopcat" onClick={handleLinkClick}>Men</Link>
-                            <Link href="/shopcat" onClick={handleLinkClick}>Women</Link>
+                            <Link href="/men" onClick={handleLinkClick}>Men</Link>
+                            <Link href="/men" onClick={handleLinkClick}>Women</Link>
                         </Nav> */}
                         <div className='mobilemenus ps-4'>
                             <div className='d-flex gap-2 mb-3'>
@@ -113,7 +113,7 @@ const MobileMenus = () => {
                                 <Link className='text-primary' href={`/`}>Logout</Link>
                             </div>
                             <Link onClick={handleLinkClick} className='py-2 d-block' href={`/profile`}>Account</Link>
-                            <Link href={`/shopcat`} onClick={handleLinkClick} className='btn btn-primary w-100 mt-10'>Find Store</Link>
+                            {/* <Link href={`/men`} onClick={handleLinkClick} className='btn btn-primary w-100 mt-10'>Find Store</Link> */}
                         </div>
 
 

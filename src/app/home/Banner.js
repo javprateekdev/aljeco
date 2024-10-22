@@ -40,20 +40,20 @@ const Banner = () => {
             // modules={[Navigation, Pagination]}
           >
             <SwiperSlide>
-              <Link href="/shopcat">
+              <Link href="/men">
                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/SolitaireBlog/Desktop.webp"/>
                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/WorkWear/Mobile768x890.webp"/>
               </Link>
             </SwiperSlide>
             <SwiperSlide>
-              <Link href="/shopcat">
+              <Link href="/men">
                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/WorkWear/Desktop1920x694.webp"/>
                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/08-AUG/Banner/DigiGold/01/Mobile_768x890.jpg"/>
 
               </Link>
             </SwiperSlide>
             <SwiperSlide>
-              <Link href="/shopcat">
+              <Link href="/men">
                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/05_May/Banner/Extra/01/Desktop_1920x694.jpg"/> 
                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/SolitaireBlog/Mobile.webp"/> 
               </Link>

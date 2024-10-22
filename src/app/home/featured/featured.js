@@ -123,7 +123,7 @@ const Featured = () => {
                             <span><i className="fa-solid fa-star"></i></span>
                         </div>
                         <div className="tp-featured-btn">
-                            <Link href="/shopcat" className="tp-btn tp-btn-border tp-btn-border-sm">Shop Now 
+                            <Link href="/men" className="tp-btn tp-btn-border tp-btn-border-sm">Shop Now 
                             <FaArrowRightLong/>
                             </Link>
                         </div>
@@ -144,12 +144,13 @@ const Featured = () => {
                         <div className="tp-product-rating-icon tp-product-rating-icon-2">
                             <span><i className="fa-solid fa-star"></i></span>
                             <span><i className="fa-solid fa-star"></i></span>
+
                             <span><i className="fa-solid fa-star"></i></span>
                             <span><i className="fa-solid fa-star"></i></span>
                             <span><i className="fa-solid fa-star"></i></span>
                         </div>
                         <div className="tp-featured-btn">
-                            <Link href="/shopcat" className="tp-btn tp-btn-border tp-btn-border-sm">Shop Now 
+                            <Link href="/men" className="tp-btn tp-btn-border tp-btn-border-sm">Shop Now 
                             <FaArrowRightLong/>
                             </Link>
                         </div>

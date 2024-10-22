@@ -182,7 +182,7 @@ const Cart = () => {
     } else {
       fetchCart();
     }
-  }, [token, fetchCart, router]);
+  }, []);
 
   if (loading) return <Loader />;
 

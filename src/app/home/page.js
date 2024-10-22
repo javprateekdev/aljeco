@@ -25,18 +25,18 @@ export default function HomePage() {
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-xl-6 leftdimg">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid rounded-2" src="https://cdn.caratlane.com/media/static/images/V4/2024/Shaya/08-August/Responsive/09/Responsive-05.jpg"/>
                             </Link>
                         </div>
                         <div className="col-xl-6 righsimg">
                            <div>
-                                <Link href="/shopcat">
+                                <Link href="/men">
                                     <img className="img-fluid rounded-2" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/06_JUNE/Banner/RTS/2x.webp"/>
                                 </Link>
                            </div>
                            <div className="pt-2 pt-md-4">
-                                <Link href="/shopcat">
+                                <Link href="/men">
                                     <img className="img-fluid rounded-2" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/08-AUG/Banner/LatestDesigns/01/1X.webp"/>
                                 </Link>
                            </div>
@@ -44,37 +44,37 @@ export default function HomePage() {
                     </div>
                     <div className="row py-4 py-md-5">
                         <div className="col-6 col-md-4 pb-2 pb-md-4">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/Desktop_1.png"/>
                                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/mobile_1.png"/>
                             </Link>
                         </div>
                         <div className="col-6 col-md-4 pb-2 pb-md-4">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/Desktop_4.png"/>
                                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/mobile_4.png"/>
                             </Link>
                         </div>
                         <div className="col-6 col-md-4 pb-2 pb-md-4">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/Desktop_3.png"/>
                                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/mobile_3.png"/>
                             </Link>
                         </div>
                         <div className="col-6 col-md-4 pb-2 pb-md-4">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/Desktop_4.png"/>
                                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/mobile_5.png"/>
                             </Link>
                         </div>
                         <div className="col-6 col-md-4 pb-2 pb-md-4">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/Desktop_5.png"/>
                                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/mobile_2.png"/>
                             </Link>
                         </div>
                         <div className="col-6 col-md-4 pb-2 pb-md-4">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid d-none d-lg-block" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/Desktop_6.png"/>
                                 <img className="img-fluid d-block d-lg-none" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/07_JULY/Banner/tile/02/mobile_6.png"/>
                             </Link>
@@ -149,7 +149,7 @@ export default function HomePage() {
             <section className="">
                 <div className="container-fluid">
                     <div className="d-flex">
-                    <Link href="/shopcat">
+                    <Link href="/men">
                         <img className="img-fluid rounded-2" src="assets/videoframe_1216.png"/>
                     </Link>
                     </div> 
@@ -159,20 +159,20 @@ export default function HomePage() {
                 <div className="container-fluid py-md-4">
                     <div className="row align-items-center">
                         <div className="col-md-4 order-lg-1 mb-3 mb-lg-0">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid rounded-2" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/08-AUG/Banner/CollectionBlock/Disney/Collection_disney_11.jpg"/>
                             </Link>
                         </div>
                         <div className="col-md-4 order-lg-3 mb-3 mb-lg-0">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid rounded-2" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/03_MAR/HPbanner/Collection/Collection_Harry_potter.jpg"/>
                             </Link>
                         </div>
                         <div className="col-md-4 text-center order-lg-2 mb-3 mb-lg-0">
-                            <Link href="/shopcat">
+                            <Link href="/men">
                                 <img className="img-fluid rounded-2" src="https://cdn.caratlane.com/media/static/images/V4/2024/CL/05_May/Banner/Collection/Utsav.jpg"/>
                             </Link>
-                            <Link href={`/shopcat`} className="btn btn-primary py-2 px-4 mt-4">View All Collections</Link>
+                            <Link href={`/men`} className="btn btn-primary py-2 px-4 mt-4">View All Collections</Link>
                         </div>
                     </div>
 
