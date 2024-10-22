@@ -10,7 +10,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Loader from "../utils/loader";
 import { apiUrl } from "../api";
 const Wishlist = () => {
-  
   const { wishListItems, fetchWishlist } = useContext(WishListContext);
   const { addToCart } = useContext(CartContext); // Add addToCart for adding items to cart
   const router = useRouter();
@@ -18,11 +17,6 @@ const Wishlist = () => {
   const [quantities, setQuantities] = useState({}); // Track item quantities
 
   const [token, setToken] = useState("");
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token);
-  }, []);
 
   const deleteWishListItem = async (id) => {
     try {
@@ -92,11 +86,13 @@ const Wishlist = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
     if (!token) {
       router.push("/authentication/login");
     }
     fetchWishlist();
-  }, [fetchWishlist, token]);
+  }, []);
 
   if (loading) return <Loader />;
 

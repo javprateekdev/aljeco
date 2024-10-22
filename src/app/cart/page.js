@@ -19,6 +19,7 @@ const Cart = () => {
   const [discountDetails, setDiscountDetails] = useState(null);
   const [token, setToken] = useState("");
   const router = useRouter();
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
     setToken(token);
