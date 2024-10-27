@@ -144,7 +144,7 @@ const ShopContent = () => {
                               Showing {currentPage * itemsPerPage + 1}–
                               {Math.min(
                                 count,
-                                (currentPage + 1) * itemsPerPage
+                                (currentPage + 1) * itemsPerPage,
                               )}{" "}
                               of {`${count}`} results
                             </p>

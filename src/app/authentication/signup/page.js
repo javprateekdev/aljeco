@@ -105,12 +105,25 @@ const SignUp = () => {
         });
         localStorage.setItem("token", response.data.accessToken);
         router.push("/");
+        if (response.status == 500) {
+          toast.error(response.message, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Bounce,
+          });
+        }
       } catch (error) {
-        console.error(
-          "Error during registration:",
-          error.response?.data || error.message
-        );
-        toast.error(error.message, {
+        console.log("error", error);
+        const errormessage = error.response?.data;
+        console.error("error message", error.response?.data);
+        console.error("Error during registration:", errormessage.message);
+        toast.error(errormessage.message, {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,

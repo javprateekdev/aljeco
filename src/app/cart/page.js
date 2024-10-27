@@ -19,15 +19,20 @@ const Cart = () => {
   const [discountDetails, setDiscountDetails] = useState(null);
   const [token, setToken] = useState("");
   const router = useRouter();
-  
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token);
-  }, []);
 
   const handleCouponCodeChange = (event) => {
     setCouponCode(event.target.value);
   };
+
+  useEffect(() => {
+    const t = localStorage.getItem("token");
+    setToken(t);
+    if (!t) {
+      router.push("/authentication/login");
+    } else {
+      fetchCart();
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -176,14 +181,6 @@ const Cart = () => {
     }
     return 0;
   };
-
-  useEffect(() => {
-    if (!token) {
-      router.push("/authentication/login");
-    } else {
-      fetchCart();
-    }
-  }, []);
 
   if (loading) return <Loader />;
 

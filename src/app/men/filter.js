@@ -149,7 +149,9 @@ const Filter = () => {
           <input
             type="checkbox"
             checked={checkedFilters.sleeveLengths.includes(item.sleeveLengthId)}
-            onChange={() => updateCheckedFilters("sleeveLengths", item.sleeveLengthId)} // Use context method
+            onChange={() =>
+              updateCheckedFilters("sleeveLengths", item.sleeveLengthId)
+            } // Use context method
           />
         </label>
       </li>
@@ -207,7 +209,6 @@ const Filter = () => {
         <h3 className="tp-shop-widget-title">Styles</h3>
         <ul className="filter-items">{styleList}</ul>
       </div>
-
     </div>
   );
 };

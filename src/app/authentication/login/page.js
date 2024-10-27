@@ -5,63 +5,54 @@ import "../../../main.css";
 import "../../../spacing.css";
 import Link from "next/link";
 import axios from "axios";
+import { login } from "../../../Redux/userSlice";
 import { apiUrl } from "@/app/api";
 import { useRouter } from "next/navigation";
 import { MdLogin } from "react-icons/md";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../utils/loader";
+import { useDispatch } from "react-redux";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loggedin, setLoggedIn] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
-  // State to check if component is mounted
   const router = useRouter();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    // Set the mounted state to true when the component mounts
     setIsMounted(true);
     const token = localStorage.getItem("token");
     if (token) {
       router.push("/");
     }
     if (loggedin) {
-      // Redirect to dashboard after successful login
-      router.push("/"); // Navigate the user to the /dashboard route
+      router.push("/");
     }
   }, [loggedin, router]);
-
-  // Handle login submission
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous error
+    setError("");
     setLoading(true);
     try {
-      // Send POST request to login
       const response = await axios.post(`${apiUrl}/auth/login`, {
         email,
         password,
       });
-
-      // Assuming the token is returned in response.data.token
+      console.log("response", response);
       const { token } = response.data;
-      if (typeof window !== "undefined") {
-        localStorage.setItem("token", token);
+      dispatch(
+        login({
+          token,
+        })
+      );
+      if (token) {
         setLoggedIn(true);
       }
-
-      // Store token in localStorage if remember me is checked
-      // if (rememberMe) {
-      //   localStorage.setItem("token", token);
-      // } else {
-      //   sessionStorage.setItem("token", token); // Alternatively, use sessionStorage
-      // }
-
-      // Redirect or do something after successful login
       toast.success("Login successfully!", {
         position: "top-right",
         autoClose: 5000,
@@ -153,7 +144,9 @@ const Login = () => {
                   <p>
                     Don’t have an account?{" "}
                     <span>
-                      <Link href="/authentication/signup">Signup</Link>
+                      <Link href="/authentication/signup" prefetch={true}>
+                        Signup
+                      </Link>
                     </span>
                   </p>
                 </div>

@@ -23,7 +23,13 @@ export default function Page() {
       });
   }, []);
 
-  if (loading) return <p> <Loader/> </p>;
+  if (loading)
+    return (
+      <p>
+        {" "}
+        <Loader />{" "}
+      </p>
+    );
 
   return (
     <>

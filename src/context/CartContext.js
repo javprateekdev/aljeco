@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { apiUrl } from "@/app/api";
 import { toast, Bounce } from "react-toastify";
@@ -10,10 +10,14 @@ export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setToken(token);
+  }, []);
 
   const fetchCart = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
     try {
       const response = await axios.get(`${apiUrl}/cart`, {
         headers: {
@@ -29,8 +33,6 @@ export const CartProvider = ({ children }) => {
   };
 
   const addToCart = async (item) => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
     try {
       const response = await axios.post(`${apiUrl}/cart`, item, {
         headers: {
@@ -52,6 +54,7 @@ export const CartProvider = ({ children }) => {
       if (response.status === 201) {
         fetchCart();
       }
+      fetchCart();
     } catch (error) {
       console.error("Error adding item to cart:", error);
       toast.success(error.message, {

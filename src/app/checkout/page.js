@@ -1,12 +1,15 @@
 "use client";
-
 import React, { useEffect, useContext, useState } from "react";
 import axios from "axios";
 import { CartContext } from "../../context/CartContext";
 import { apiUrl } from "../api";
-
+import { useAuth } from "../../context/AuthContext";
+import Loader from "../utils/loader";
 const CheckoutPage = () => {
   const { cartItems } = useContext(CartContext);
+  const { token } = useAuth();
+  console.log("token", token);
+
   const [user, setUser] = useState({});
   const [discountAmount, setDiscountAmount] = useState(0);
   const [addresses, setAddresses] = useState([]);
@@ -19,32 +22,17 @@ const CheckoutPage = () => {
     country: "",
     isDefault: false,
   });
-  const [token, setToken] = useState("");
   const [orderid, setOrderId] = useState(0);
   const [couponCode, setCouponCode] = useState("");
   const [message, setMessage] = useState("");
   const [discountDetails, setDiscountDetails] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchUser();
-    };
-    fetchData();
-  }, []);
-
- useEffect(() => {
-  const fetchAddresses = async () => {
-    if (user.id) {
-      await fetchUserAddresses();
+    const local = localStorage.getItem("token");
+    if (local) {
+      fetchUser();
     }
-  };
-  fetchAddresses();
-}, [user]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token);
-  }, []);
+  }, [token]);
 
   const handleCouponCodeChange = (event) => {
     setCouponCode(event.target.value);
@@ -104,16 +92,19 @@ const CheckoutPage = () => {
   };
 
   const fetchUser = async () => {
+    if (!token) return null;
     const response = await axios.get(`${apiUrl}/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     setUser(response.data);
+    fetchUserAddresses(response.data);
   };
 
-  const fetchUserAddresses = async () => {
-    const response = await axios.get(`${apiUrl}/users/addresses/${user.id}`, {
+  const fetchUserAddresses = async (u) => {
+    if (!token) return null;
+    const response = await axios.get(`${apiUrl}/users/addresses/${u.id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -238,7 +229,7 @@ const CheckoutPage = () => {
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
   };
-
+  if (!token) return <Loader />;
   return (
     <>
       <section className="breadcrumb__area include-bg inbreadcrumb bg-light ">
@@ -298,7 +289,14 @@ const CheckoutPage = () => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                    ))}{" "}
+                  {addresses && addresses.length === 0 ? (
+                    <p className="text-danger">
+                      No Addresses Found. Add An Address Below
+                    </p>
+                  ) : (
+                    <></>
+                  )}
                 </div>
 
                 <h4>Add New Address</h4>
@@ -318,18 +316,7 @@ const CheckoutPage = () => {
                             <input type="text" placeholder="Last Name" />
                           </div>
                         </div>
-                        <div className="col-md-6">
-                          <div className="tp-checkout-input">
-                            <label>Email</label>
-                            <input type="text" placeholder="Email" />
-                          </div>
-                        </div>
-                        <div className="col-md-6">
-                          <div className="tp-checkout-input">
-                            <label>Phone</label>
-                            <input type="text" placeholder="Phone" />
-                          </div>
-                        </div>
+
                         <div className="col-md-12">
                           <div className="tp-checkout-input">
                             <label>Address Line 1</label>

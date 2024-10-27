@@ -39,7 +39,9 @@ const ProductDetails = ({ params }) => {
     const data = {
       productItemId: product.productItems[0].itemId, // Use the first product item for demo
       quantity: 1, // Set default quantity to 1
-      priceAtTime: product.productItems[0].salePrice || product.productItems[0].originalPrice, // Get the current price
+      priceAtTime:
+        product.productItems[0].salePrice ||
+        product.productItems[0].originalPrice, // Get the current price
     };
 
     try {
@@ -104,7 +106,9 @@ const ProductDetails = ({ params }) => {
                 </div>
                 <div className="tp-product-details-price-wrapper mb-20">
                   <p className="tp-product-details-price new-price mb-0">
-                    ₹{product?.productItems[0]?.salePrice || product?.productItems[0]?.originalPrice}
+                    ₹
+                    {product?.productItems[0]?.salePrice ||
+                      product?.productItems[0]?.originalPrice}
                   </p>
                   <span>MRP inclusive of all taxes</span>
                 </div>
@@ -114,9 +118,12 @@ const ProductDetails = ({ params }) => {
                 <p>{product.productDescription}</p>
                 {/* <Customize /> */}
                 <div className="tp-product-details-action-wrapper">
-                <button onClick={handleShow} className="btn btn-primary getbestprice">
+                  <button
+                    onClick={handleShow}
+                    className="btn btn-primary getbestprice"
+                  >
                     Get Best Price
-                </button>
+                  </button>
                   {/* <div className="d-flex align-items-center gap-3">
                     <div className="tp-product-details-action-item-wrapper w-75">
                       <div className="tp-product-details-add-to-cart">
@@ -165,15 +172,10 @@ const ProductDetails = ({ params }) => {
           </div>
         </div>
       </section>
-
-      <Reviews/>
-
-
+      <Reviews />
       <RelatedProducts />
-
-      <ContactModal show={show} handleClose={handleClose} /> {/* Pass show and handleClose */}
-
-
+      <ContactModal show={show} handleClose={handleClose} />{" "}
+      {/* Pass show and handleClose */}
     </>
   );
 };

@@ -10,15 +10,11 @@ export const WishListContext = createContext();
 
 export const WishListProvider = ({ children }) => {
   const [wishListItems, setWishListItems] = useState([]);
+  const [token, setToken] = useState("");
 
   // Fetch wishlist items from the API
-  const fetchWishlist = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.warn("No token found, cannot fetch wishlist.");
-      return;
-    }
-
+  const fetchWishlist = async (t) => {
+    console.log("token", token);
     try {
       const response = await axios.get(`${apiUrl}/wishlist`, {
         headers: {
@@ -34,12 +30,6 @@ export const WishListProvider = ({ children }) => {
 
   // Add an item to the wishlist
   const addToWishList = async (item) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.warn("No token found, cannot add item to wishlist.");
-      return;
-    }
-
     try {
       const response = await axios.post(`${apiUrl}/wishlist`, item, {
         headers: {
@@ -66,10 +56,14 @@ export const WishListProvider = ({ children }) => {
     }
   };
 
-  // Optionally: Fetch wishlist on mount (when the provider initializes)
   useEffect(() => {
-    fetchWishlist();
-  }, []);
+    const t = localStorage.getItem("token");
+
+    if (t) {
+      setToken(t);
+      fetchWishlist(t);
+    }
+  }, [token]);
 
   return (
     <WishListContext.Provider

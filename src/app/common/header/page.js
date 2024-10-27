@@ -23,6 +23,7 @@ import MobileSearch from "./mobilesearch";
 import { CartContext } from "../../../context/CartContext";
 import { WishListContext } from "../../../context/WishListContext";
 import { BiUser } from "react-icons/bi";
+import Link from "next/link";
 
 export default function Header() {
   const { cartItems, fetchCart } = useContext(CartContext);
@@ -30,14 +31,13 @@ export default function Header() {
   const { wishListItems, fetchWishlist } = useContext(WishListContext);
   const router = useRouter(); // Use router for navigation
   const [loggedIn, setLoggedIn] = useState(false);
-  useEffect(() => {
-    fetchCart();
-    fetchWishlist();
-  }, [fetchCart, fetchWishlist]);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       setLoggedIn(true);
+      fetchCart();
+      fetchWishlist();
     }
   }, []);
 
@@ -141,15 +141,14 @@ export default function Header() {
                 <div className="row align-items-center">
                   <div className="col-xl-2 col-lg-5 col-md-5 col-sm-4 col-6">
                     <div className="logo">
-                      <button
-                        onClick={() => router.push("/")}
-                        className="d-flex align-items-center gap-2"
-                      >
-                        <img src="/assets/img/logo/logo.png" alt="logo" />
-                        <span>
-                          <strong>Aljeco</strong>{" "}
-                        </span>
-                      </button>
+                      <Link href="/" prefetch={true}>
+                        <button className="d-flex align-items-center gap-2">
+                          <img src="/assets/img/logo/logo.png" alt="logo" />
+                          <span>
+                            <strong>Aljeco</strong>{" "}
+                          </span>
+                        </button>
+                      </Link>
                     </div>
                   </div>
                   <div className="col-xl-4 d-none d-xl-block">
@@ -157,16 +156,14 @@ export default function Header() {
                       <nav className="tp-main-menu-content">
                         <ul>
                           <li>
-                            <button onClick={() => router.push("/men")}>
-                              Mens
-                            </button>
+                            <Link href="/men" prefetch={true}>
+                              <button>Mens</button>
+                            </Link>
                           </li>
                           <li>
-                            <button
-                              onClick={() => router.push("/wholesale-order")}
-                            >
-                              Wholesale Order
-                            </button>
+                            <Link href="/wholesale-order" prefetch={true}>
+                              <button>Wholesale Order</button>
+                            </Link>
                           </li>
                         </ul>
                       </nav>
@@ -184,57 +181,64 @@ export default function Header() {
                       </div>
                       <div className="tp-header-action d-flex align-items-center gap-xl-3 ms-xl-5">
                         <div className="tp-header-action-item d-none d-lg-block">
-                          <button
-                            onClick={() => router.push("/wishlist")}
-                            className="tp-header-action-btn"
+                          <Link
+                            href={
+                              loggedIn ? "/wishlist" : "/authentication/login"
+                            }
+                            prefetch={true}
                           >
-                            <FaRegHeart />
-                            <span className="tp-header-action-badge">
-                              {wishListItems.length ? wishListItems.length : 0}
-                            </span>
-                          </button>
+                            <button className="tp-header-action-btn">
+                              <FaRegHeart />
+                              <span className="tp-header-action-badge">
+                                {wishListItems.length
+                                  ? wishListItems.length
+                                  : 0}
+                              </span>
+                            </button>
+                          </Link>
                         </div>
                         <div className="tp-header-action-item d-block d-xl-none">
                           <MobileMenus />
                         </div>
                         <div className="tp-header-action-item d-none d-xl-block">
-                          <button
-                            onClick={() => router.push("/cart")}
-                            className="tp-header-action-btn cartmini-open-btn"
+                          <Link
+                            href={loggedIn ? "/cart" : "/authentication/login"}
+                            prefetch={true}
                           >
-                            <BsHandbag />
-                            <span className="tp-header-action-badge">
-                              {cartItems.length ? cartItems.length : 0}
-                            </span>
-                          </button>
+                            <button className="tp-header-action-btn cartmini-open-btn">
+                              <BsHandbag />
+                              <span className="tp-header-action-badge">
+                                {cartItems.length ? cartItems.length : 0}
+                              </span>
+                            </button>
+                          </Link>
                         </div>
                         {loggedIn ? (
                           <></>
                         ) : (
                           <div className="tp-header-action-item">
-                            <button
-                              onClick={() =>
-                                router.push("/authentication/login")
-                              }
-                              className="d-flex align-items-center btn btn-primary"
-                            >
-                              <MdLogin style={{ fontSize: "18px" }} />{" "}
-                              <span className="ps-1 d-none d-md-block">
-                                Login
-                              </span>
-                            </button>
+                            <Link href="/authentication/login" prefetch={true}>
+                              <button className="d-flex align-items-center btn btn-primary">
+                                <MdLogin style={{ fontSize: "18px" }} />{" "}
+                                <span className="ps-1 d-none d-md-block">
+                                  Login
+                                </span>
+                              </button>
+                            </Link>
                           </div>
                         )}
-
-                        <div className="tp-header-action-item d-none d-md-block">
-                          <button
-                            onClick={() => router.push("/profile")}
-                            className="d-flex align-items-center btn btn-primary"
-                          >
-                            <BiUser style={{ fontSize: "18px" }} />{" "}
-                            <span className="ps-1">Profile</span>
-                          </button>
-                        </div>
+                        {!loggedIn ? (
+                          <></>
+                        ) : (
+                          <div className="tp-header-action-item d-none d-md-block">
+                            <Link href="/profile" prefetch={true}>
+                              <button className="d-flex align-items-center btn btn-primary">
+                                <BiUser style={{ fontSize: "18px" }} />{" "}
+                                <span className="ps-1">Profile</span>
+                              </button>
+                            </Link>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

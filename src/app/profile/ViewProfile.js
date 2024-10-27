@@ -1,22 +1,40 @@
-import React, { useState,useEffect } from "react";
+"use client";
+import React, { useState, useEffect, useContext } from "react";
 import { BiCamera, BiEnvelope, BiPhone } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "@/context/AuthContext";
+import { WishListContext } from "@/context/WishListContext";
+import axios from "axios";
+import Image from "next/image";
+import { apiUrl } from "../api";
 const ViewProfile = () => {
   const router = useRouter();
+  const { token, logout } = useAuth();
+  const { wishListItems } = useContext(WishListContext);
+  const [user, setUser] = useState(null);
+  const [addressCount, setAddressCount] = useState(0);
+  const [ordersCount, setOrdersCount] = useState(0);
 
-  const [token, setToken] = useState("");
+  console.log("user", user);
+  const getUser = async (u) => {
+    if (!token) return null;
+    const response = await axios.get(`${apiUrl}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    setUser(response.data);
+    setAddressCount(response.data.Address.length || 0);
+    setOrdersCount(response.data.Order.length || 0);
+  };
+
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token);
-  }, []);
-
+    getUser();
+  }, [token]);
   const handleLogout = () => {
-    if (token) {
-      localStorage.removeItem("token");
-    }
-
+    logout();
     toast.success("Logout Successfully!", {
       position: "top-right",
       autoClose: 5000,
@@ -40,7 +58,13 @@ const ViewProfile = () => {
               <div className="col-md-9">
                 <div className="profile__main-inner d-flex flex-wrap align-items-center">
                   <div className="profile__main-thumb">
-                    <img src="assets/img/users/user-10.jpg" alt="" />
+                    <img
+                      src={
+                        user?.profileImage ||
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s"
+                      }
+                      alt={user?.name || "Default profile"}
+                    />
                     <div className="profile__main-thumb-edit">
                       <input
                         id="profile-thumb-input"
@@ -54,14 +78,14 @@ const ViewProfile = () => {
                   </div>
                   <div className="profile__main-content">
                     <h4 className="profile__main-title">
-                      Welcome Mr. Sunil Kumar Yadav!
+                      Welcome {user && user.firstname} {user && user.lastname}
                     </h4>
                     <p>
-                      <BiEnvelope /> sunilyadav285166@gmail.com
+                      <BiEnvelope /> {(user && user.email) || ""}
                     </p>
                     <p>
                       <BiPhone />
-                      +91- 8604593185
+                      +91- {(user && user.mobile) || ""}
                     </p>
                   </div>
                 </div>
@@ -83,7 +107,7 @@ const ViewProfile = () => {
                   <div className="profile__main-info-icon">
                     <span>
                       <span className="profile-icon-count profile-order">
-                        5
+                        {ordersCount}
                       </span>
                       <svg viewBox="0 0 512 512">
                         <path d="M472.916,224H448.007a24.534,24.534,0,0,0-23.417-18H398V140.976a6.86,6.86,0,0,0-3.346-6.062L207.077,26.572a6.927,6.927,0,0,0-6.962,0L12.48,134.914A6.981,6.981,0,0,0,9,140.976V357.661a7,7,0,0,0,3.5,6.062L200.154,472.065a7,7,0,0,0,3.5.938,7.361,7.361,0,0,0,3.6-.938L306,415.108v41.174A29.642,29.642,0,0,0,335.891,486H472.916A29.807,29.807,0,0,0,503,456.282v-202.1A30.2,30.2,0,0,0,472.916,224Zm-48.077-4A10.161,10.161,0,0,1,435,230.161v.678A10.161,10.161,0,0,1,424.839,241H384.161A10.161,10.161,0,0,1,374,230.839v-.678A10.161,10.161,0,0,1,384.161,220ZM203.654,40.717l77.974,45.018L107.986,185.987,30.013,140.969ZM197,453.878,23,353.619V153.085L197,253.344Zm6.654-212.658-81.668-47.151L295.628,93.818,377.3,140.969ZM306,254.182V398.943l-95,54.935V253.344L384,153.085V206h.217A24.533,24.533,0,0,0,360.8,224H335.891A30.037,30.037,0,0,0,306,254.182Zm183,202.1A15.793,15.793,0,0,1,472.916,472H335.891A15.628,15.628,0,0,1,320,456.282v-202.1A16.022,16.022,0,0,1,335.891,238h25.182a23.944,23.944,0,0,0,23.144,17H424.59a23.942,23.942,0,0,0,23.143-17h25.183A16.186,16.186,0,0,1,489,254.182Z" />
@@ -106,7 +130,7 @@ const ViewProfile = () => {
                   <div className="profile__main-info-icon">
                     <span>
                       <span className="profile-icon-count profile-wishlist">
-                        10
+                        {wishListItems.length || 0}
                       </span>
                       <svg
                         viewBox="0 -20 480 480"

@@ -12,7 +12,6 @@ import { apiUrl } from "../api";
 import { useFilter } from "@/context/FilterContext";
 import Loader from "../utils/loader";
 
-
 const ShopContent = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -56,7 +55,7 @@ const ShopContent = () => {
     fetchData();
   }, [checkedFilters]); // Fetch data whenever the filters change
 
-  if (loading) return <Loader/>;
+  if (loading) return <Loader />;
 
   return (
     <>

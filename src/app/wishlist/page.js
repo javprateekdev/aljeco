@@ -141,7 +141,7 @@ const Wishlist = () => {
                           <button
                             onClick={() =>
                               router.push(
-                                `/product/${item.productItem.productId}`
+                                `/product/${item.productItem.productId}`,
                               )
                             }
                           >
@@ -157,7 +157,7 @@ const Wishlist = () => {
                           <button
                             onClick={() =>
                               router.push(
-                                `/product/${item.productItem.productId}`
+                                `/product/${item.productItem.productId}`,
                               )
                             }
                           >

@@ -1,9 +1,9 @@
-"use client"
-import React, { useState } from 'react';
+"use client";
+import React, { useState } from "react";
 import { FiSearch, FiSearch as FiSearchFilled } from "react-icons/fi";
 import { FaSearch } from "react-icons/fa";
 
-import Offcanvas from 'react-bootstrap/Offcanvas';
+import Offcanvas from "react-bootstrap/Offcanvas";
 
 const MobileSearch = () => {
   const [show, setShow] = useState(false);
@@ -20,9 +20,9 @@ const MobileSearch = () => {
           onClick={handleShow}
         >
           {show ? (
-            <FaSearch className="icon-active" /> 
+            <FaSearch className="icon-active" />
           ) : (
-            <FiSearch className="icon-default" /> 
+            <FiSearch className="icon-default" />
           )}
           <span className={show ? "text-active" : "text-default"}>Search</span>
         </a>
@@ -33,31 +33,34 @@ const MobileSearch = () => {
           <Offcanvas.Title>Search</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
-            <section className="tp-search-area tp-search-style-secondary opened">
-                <div className="container">
-                    <div className="row">
-                    <div className="col-xl-12">
-                        <div className="tp-search-form">
-                            <div className="tp-search-close text-center mb-20">
-                                <button className="tp-search-close-btn tp-search-close-btn"></button>
-                            </div>
-                            <form action="#">
-                                <div className="tp-search-input mb-10">
-                                  <input type="text" placeholder="Search for product..." />
-                                </div>
-                                <div className="tp-search-category">
-                                <span>Search : </span>
-                                    <a href="#">Men, </a>
-                                    <a href="#">Women, </a>
-                                    <a href="#">Trending, </a>
-                                    <a href="#">Product name... </a>
-                                </div>
-                            </form>
-                        </div>
+          <section className="tp-search-area tp-search-style-secondary opened">
+            <div className="container">
+              <div className="row">
+                <div className="col-xl-12">
+                  <div className="tp-search-form">
+                    <div className="tp-search-close text-center mb-20">
+                      <button className="tp-search-close-btn tp-search-close-btn"></button>
                     </div>
-                    </div>
+                    <form action="#">
+                      <div className="tp-search-input mb-10">
+                        <input
+                          type="text"
+                          placeholder="Search for product..."
+                        />
+                      </div>
+                      <div className="tp-search-category">
+                        <span>Search : </span>
+                        <a href="#">Men, </a>
+                        <a href="#">Women, </a>
+                        <a href="#">Trending, </a>
+                        <a href="#">Product name... </a>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-            </section>
+              </div>
+            </div>
+          </section>
         </Offcanvas.Body>
       </Offcanvas>
     </>

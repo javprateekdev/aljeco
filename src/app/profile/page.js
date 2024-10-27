@@ -11,15 +11,14 @@ import MyOrders from "./MyOrders";
 import ChangePassword from "./ChangePassword";
 import TrackOrder from "./TrackOrder";
 import { useRouter } from "next/navigation";
-
+import { useAuth } from "../../context/AuthContext";
 const Profile = () => {
   const router = useRouter();
+  const { user, token, fetchUser } = useAuth();
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      router.push("/authentication/login");
-    }
+    fetchUser();
   }, []);
+  console.log("user", user);
   return (
     <>
       <section className="pt-120 pb-60">
@@ -35,9 +34,9 @@ const Profile = () => {
                     <Nav.Item className="mb-2">
                       <Nav.Link eventKey="profile">Profile</Nav.Link>
                     </Nav.Item>
-                    <Nav.Item className="mb-2">
+                    {/* <Nav.Item className="mb-2">
                       <Nav.Link eventKey="info">Information</Nav.Link>
-                    </Nav.Item>
+                    </Nav.Item> */}
                     <Nav.Item className="mb-2">
                       <Nav.Link eventKey="address">Addresses</Nav.Link>
                     </Nav.Item>
@@ -58,9 +57,9 @@ const Profile = () => {
                   <Tab.Pane eventKey="profile">
                     <ViewProfile />
                   </Tab.Pane>
-                  <Tab.Pane eventKey="info">
+                  {/* <Tab.Pane eventKey="info">
                     <Information />
-                  </Tab.Pane>
+                  </Tab.Pane> */}
                   <Tab.Pane eventKey="address">
                     <Address />
                   </Tab.Pane>
