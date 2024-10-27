@@ -2,10 +2,13 @@
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { apiUrl } from "../api";
-import { useFilter } from "../../context/FilterContext"; // Import the custom hook
+import { useFilter } from "../../context/FilterContext";
+import Skeleton from "react-loading-skeleton"; // Import Skeleton
+import "react-loading-skeleton/dist/skeleton.css"; // Import default styles
 
 const Filter = () => {
-  const { checkedFilters, updateCheckedFilters } = useFilter(); // Use the context
+  const { checkedFilters, updateCheckedFilters } = useFilter();
+  const [loading, setLoading] = useState(true); // Add loading state
   const [bodyFits, setBodyFits] = useState([]);
   const [colours, setColours] = useState([]);
   const [dressTypes, setDressTypes] = useState([]);
@@ -26,8 +29,10 @@ const Filter = () => {
       setSeasons(response.data.seasons);
       setSleeveLength(response.data.sleeveLengths);
       setStyles(response.data.styles);
+      setLoading(false); // Data loaded, stop showing skeletons
     } catch (error) {
-      console.error("Error fetching the products:", error);
+      console.error("Error fetching the filters:", error);
+      setLoading(false); // Stop skeletons even on error
     }
   };
 
@@ -38,142 +43,183 @@ const Filter = () => {
   }, [colours.length]);
 
   const bodyList = useMemo(() => {
-    return bodyFits.map((item) => (
-      <li key={item.bodyId}>
-        <label className="d-flex align-items-center gap-1 ">
-          <span className="d-flex justify-content-between w-100">
-            {item.name}
-          </span>
-          <input
-            type="checkbox"
-            checked={checkedFilters.bodyFits.includes(item.bodyId)}
-            onChange={() => updateCheckedFilters("bodyFits", item.bodyId)} // Use context method
-          />
-        </label>
-      </li>
-    ));
-  }, [bodyFits, checkedFilters.bodyFits, updateCheckedFilters]);
+    return loading ? (
+      <Skeleton count={4} height={20} />
+    ) : (
+      bodyFits.map((item) => (
+        <li key={item.bodyId}>
+          <label className="d-flex align-items-center gap-1 ">
+            <span className="d-flex justify-content-between w-100">
+              {item.name}
+            </span>
+            <input
+              type="checkbox"
+              checked={checkedFilters.bodyFits.includes(item.bodyId)}
+              onChange={() => updateCheckedFilters("bodyFits", item.bodyId)}
+            />
+          </label>
+        </li>
+      ))
+    );
+  }, [bodyFits, checkedFilters.bodyFits, updateCheckedFilters, loading]);
 
   const colourList = useMemo(() => {
-    return colours.map((item) => (
-      <li key={item.colourId}>
-        <label className="d-flex align-items-center gap-1 ">
-          <span className="d-flex justify-content-between w-100">
-            {item.colourName}
-          </span>
-          <input
-            type="checkbox"
-            checked={checkedFilters.colours.includes(item.colourId)}
-            onChange={() => updateCheckedFilters("colours", item.colourId)} // Use context method
-          />
-        </label>
-      </li>
-    ));
-  }, [colours, checkedFilters.colours, updateCheckedFilters]);
+    return loading ? (
+      <Skeleton count={4} height={20} />
+    ) : (
+      colours.map((item) => (
+        <li key={item.colourId}>
+          <label className="d-flex align-items-center gap-1 ">
+            <span className="d-flex justify-content-between w-100">
+              {item.colourName}
+            </span>
+            <input
+              type="checkbox"
+              checked={checkedFilters.colours.includes(item.colourId)}
+              onChange={() => updateCheckedFilters("colours", item.colourId)}
+            />
+          </label>
+        </li>
+      ))
+    );
+  }, [colours, checkedFilters.colours, updateCheckedFilters, loading]);
 
   const dressTypeList = useMemo(() => {
-    return dressTypes.map((item) => (
-      <li key={item.dressId}>
-        <label className="d-flex align-items-center gap-1 ">
-          <span className="d-flex justify-content-between w-100">
-            {item.name}
-          </span>
-          <input
-            type="checkbox"
-            checked={checkedFilters.dressTypes.includes(item.dressId)}
-            onChange={() => updateCheckedFilters("dressTypes", item.dressId)} // Use context method
-          />
-        </label>
-      </li>
-    ));
-  }, [dressTypes, checkedFilters.dressTypes, updateCheckedFilters]);
+    return loading ? (
+      <Skeleton count={4} height={20} />
+    ) : (
+      dressTypes.map((item) => (
+        <li key={item.dressId}>
+          <label className="d-flex align-items-center gap-1 ">
+            <span className="d-flex justify-content-between w-100">
+              {item.name}
+            </span>
+            <input
+              type="checkbox"
+              checked={checkedFilters.dressTypes.includes(item.dressId)}
+              onChange={() => updateCheckedFilters("dressTypes", item.dressId)}
+            />
+          </label>
+        </li>
+      ))
+    );
+  }, [dressTypes, checkedFilters.dressTypes, updateCheckedFilters, loading]);
 
   const lengthList = useMemo(() => {
-    return lengths.map((item) => (
-      <li key={item.lengthId}>
-        <label className="d-flex align-items-center gap-1 ">
-          <span className="d-flex justify-content-between w-100">
-            {item.name}
-          </span>
-          <input
-            type="checkbox"
-            checked={checkedFilters.lengths.includes(item.lengthId)}
-            onChange={() => updateCheckedFilters("lengths", item.lengthId)} // Use context method
-          />
-        </label>
-      </li>
-    ));
-  }, [lengths, checkedFilters.lengths, updateCheckedFilters]);
+    return loading ? (
+      <Skeleton count={4} height={20} />
+    ) : (
+      lengths.map((item) => (
+        <li key={item.lengthId}>
+          <label className="d-flex align-items-center gap-1 ">
+            <span className="d-flex justify-content-between w-100">
+              {item.name}
+            </span>
+            <input
+              type="checkbox"
+              checked={checkedFilters.lengths.includes(item.lengthId)}
+              onChange={() => updateCheckedFilters("lengths", item.lengthId)}
+            />
+          </label>
+        </li>
+      ))
+    );
+  }, [lengths, checkedFilters.lengths, updateCheckedFilters, loading]);
 
   const neckLineList = useMemo(() => {
-    return neckLines.map((item) => (
-      <li key={item.neckLineId}>
-        <label className="d-flex align-items-center gap-1 ">
-          <span className="d-flex justify-content-between w-100">
-            {item.name}
-          </span>
-          <input
-            type="checkbox"
-            checked={checkedFilters.neckLines.includes(item.neckLineId)}
-            onChange={() => updateCheckedFilters("neckLines", item.neckLineId)} // Use context method
-          />
-        </label>
-      </li>
-    ));
-  }, [neckLines, checkedFilters.neckLines, updateCheckedFilters]);
+    return loading ? (
+      <Skeleton count={4} height={20} />
+    ) : (
+      neckLines.map((item) => (
+        <li key={item.neckLineId}>
+          <label className="d-flex align-items-center gap-1 ">
+            <span className="d-flex justify-content-between w-100">
+              {item.name}
+            </span>
+            <input
+              type="checkbox"
+              checked={checkedFilters.neckLines.includes(item.neckLineId)}
+              onChange={() =>
+                updateCheckedFilters("neckLines", item.neckLineId)
+              }
+            />
+          </label>
+        </li>
+      ))
+    );
+  }, [neckLines, checkedFilters.neckLines, updateCheckedFilters, loading]);
 
   const seasonList = useMemo(() => {
-    return seasons.map((item) => (
-      <li key={item.seasonId}>
-        <label className="d-flex align-items-center gap-1 ">
-          <span className="d-flex justify-content-between w-100">
-            {item.name}
-          </span>
-          <input
-            type="checkbox"
-            checked={checkedFilters.seasons.includes(item.seasonId)}
-            onChange={() => updateCheckedFilters("seasons", item.seasonId)} // Use context method
-          />
-        </label>
-      </li>
-    ));
-  }, [seasons, checkedFilters.seasons, updateCheckedFilters]);
+    return loading ? (
+      <Skeleton count={4} height={20} />
+    ) : (
+      seasons.map((item) => (
+        <li key={item.seasonId}>
+          <label className="d-flex align-items-center gap-1 ">
+            <span className="d-flex justify-content-between w-100">
+              {item.name}
+            </span>
+            <input
+              type="checkbox"
+              checked={checkedFilters.seasons.includes(item.seasonId)}
+              onChange={() => updateCheckedFilters("seasons", item.seasonId)}
+            />
+          </label>
+        </li>
+      ))
+    );
+  }, [seasons, checkedFilters.seasons, updateCheckedFilters, loading]);
 
   const sleeveLengthList = useMemo(() => {
-    return sleeveLengths.map((item) => (
-      <li key={item.sleeveLengthId}>
-        <label className="d-flex align-items-center gap-1 ">
-          <span className="d-flex justify-content-between w-100">
-            {item.name}
-          </span>
-          <input
-            type="checkbox"
-            checked={checkedFilters.sleeveLengths.includes(item.sleeveLengthId)}
-            onChange={() =>
-              updateCheckedFilters("sleeveLengths", item.sleeveLengthId)
-            } // Use context method
-          />
-        </label>
-      </li>
-    ));
-  }, [sleeveLengths, checkedFilters.sleeveLengths, updateCheckedFilters]);
+    return loading ? (
+      <Skeleton count={4} height={20} />
+    ) : (
+      sleeveLengths.map((item) => (
+        <li key={item.sleeveLengthId}>
+          <label className="d-flex align-items-center gap-1 ">
+            <span className="d-flex justify-content-between w-100">
+              {item.name}
+            </span>
+            <input
+              type="checkbox"
+              checked={checkedFilters.sleeveLengths.includes(
+                item.sleeveLengthId
+              )}
+              onChange={() =>
+                updateCheckedFilters("sleeveLengths", item.sleeveLengthId)
+              }
+            />
+          </label>
+        </li>
+      ))
+    );
+  }, [
+    sleeveLengths,
+    checkedFilters.sleeveLengths,
+    updateCheckedFilters,
+    loading,
+  ]);
 
   const styleList = useMemo(() => {
-    return styles.map((item) => (
-      <li key={item.styleId}>
-        <label className="d-flex align-items-center gap-1 ">
-          <span className="d-flex justify-content-between w-100">
-            {item.name}
-          </span>
-          <input
-            type="checkbox"
-            checked={checkedFilters.styles.includes(item.styleId)}
-            onChange={() => updateCheckedFilters("styles", item.styleId)} // Use context method
-          />
-        </label>
-      </li>
-    ));
-  }, [styles, checkedFilters.styles, updateCheckedFilters]);
+    return loading ? (
+      <Skeleton count={4} height={20} />
+    ) : (
+      styles.map((item) => (
+        <li key={item.styleId}>
+          <label className="d-flex align-items-center gap-1 ">
+            <span className="d-flex justify-content-between w-100">
+              {item.name}
+            </span>
+            <input
+              type="checkbox"
+              checked={checkedFilters.styles.includes(item.styleId)}
+              onChange={() => updateCheckedFilters("styles", item.styleId)}
+            />
+          </label>
+        </li>
+      ))
+    );
+  }, [styles, checkedFilters.styles, updateCheckedFilters, loading]);
 
   return (
     <div className="tp-shop-sidebar mr-10">

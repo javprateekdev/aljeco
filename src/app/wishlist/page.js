@@ -9,6 +9,7 @@ import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../utils/loader";
 import { apiUrl } from "../api";
+import { getToken } from "../api";
 const Wishlist = () => {
   const { wishListItems, fetchWishlist } = useContext(WishListContext);
   const { addToCart } = useContext(CartContext); // Add addToCart for adding items to cart
@@ -86,11 +87,8 @@ const Wishlist = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     setToken(token);
-    if (!token) {
-      router.push("/authentication/login");
-    }
     fetchWishlist();
   }, []);
 
@@ -141,7 +139,7 @@ const Wishlist = () => {
                           <button
                             onClick={() =>
                               router.push(
-                                `/product/${item.productItem.productId}`,
+                                `/product/${item.productItem.productId}`
                               )
                             }
                           >
@@ -157,7 +155,7 @@ const Wishlist = () => {
                           <button
                             onClick={() =>
                               router.push(
-                                `/product/${item.productItem.productId}`,
+                                `/product/${item.productItem.productId}`
                               )
                             }
                           >

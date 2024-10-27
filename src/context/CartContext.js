@@ -4,8 +4,8 @@ import axios from "axios";
 import { apiUrl } from "@/app/api";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getToken } from "@/app/api";
 
-// Create the context
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
@@ -13,11 +13,12 @@ export const CartProvider = ({ children }) => {
   const [token, setToken] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     setToken(token);
   }, []);
 
   const fetchCart = async () => {
+    const token = getToken();
     try {
       const response = await axios.get(`${apiUrl}/cart`, {
         headers: {

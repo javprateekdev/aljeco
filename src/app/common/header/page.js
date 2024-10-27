@@ -24,14 +24,17 @@ import { CartContext } from "../../../context/CartContext";
 import { WishListContext } from "../../../context/WishListContext";
 import { BiUser } from "react-icons/bi";
 import Link from "next/link";
-
+import { apiUrl, getToken } from "@/app/api";
+import axios from "axios";
 export default function Header() {
   const { cartItems, fetchCart } = useContext(CartContext);
   const [activeMenu, setActiveMenu] = useState("");
   const { wishListItems, fetchWishlist } = useContext(WishListContext);
   const router = useRouter(); // Use router for navigation
   const [loggedIn, setLoggedIn] = useState(false);
-
+  const [searchInput, setSearchInput] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  console.log("filteredProducts", filteredProducts);
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -51,6 +54,32 @@ export default function Header() {
   const handleMenuClick = (menu, path) => {
     setActiveMenu(menu);
     router.push(path);
+  };
+
+  const userMe = async () => {
+    try {
+      const req = await axios.get(`${apiUrl}/users/me`);
+      console.log("req", req);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  const handleSearchInputChange = async (event) => {
+    const value = event.target.value;
+    console.log("event", event);
+    setSearchInput(value);
+
+    if (value) {
+      try {
+        const response = await axios.get(`${apiUrl}/product?search=${value}`);
+        setFilteredProducts(response.data.data); // Assuming the response is an array of products
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    } else {
+      setFilteredProducts([]); // Clear suggestions if input is empty
+    }
   };
 
   return (
@@ -172,13 +201,52 @@ export default function Header() {
                   <div className="col-xl-6 col-lg-7 col-md-7 col-sm-8 col-6">
                     <div className="tp-header-bottom-right d-flex align-items-center justify-content-end gap-2 pl-20 pe-2">
                       <div className="tp-header-search-2 d-none d-md-block">
-                        <form action="#">
-                          <input type="text" placeholder="Search Products..." />
-                          <button className="d-none d-sm-block" type="submit">
-                            <FiSearch />
-                          </button>
+                        <form
+                          onSubmit={(e) => e.preventDefault()}
+                          className="search-form"
+                        >
+                          <div className="search-input-container">
+                            <input
+                              type="text"
+                              placeholder="Search Products..."
+                              value={searchInput}
+                              onChange={handleSearchInputChange}
+                              className="search-input"
+                            />
+                            <button className="d-none d-sm-block" type="submit">
+                              <FiSearch />
+                            </button>
+                          </div>
+                          {filteredProducts.length > 0 && (
+                            <div className="search-suggestions">
+                              <ul>
+                                {filteredProducts.map((product) => (
+                                  <li key={product.id}>
+                                    <Link
+                                      href={`/men/${product.productId}`}
+                                      prefetch={true}
+                                      onClick={() => setSearchEmpty("")}
+                                    >
+                                      <p className="text-black">
+                                        {product.productName}
+                                      </p>
+                                      <img
+                                        src={
+                                          product.productItems[0].images.url ||
+                                          ""
+                                        }
+                                        className="suggestion-image"
+                                        alt={product.productName} // Provide alt text for accessibility
+                                      />
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                         </form>
                       </div>
+
                       <div className="tp-header-action d-flex align-items-center gap-xl-3 ms-xl-5">
                         <div className="tp-header-action-item d-none d-lg-block">
                           <Link
@@ -213,9 +281,7 @@ export default function Header() {
                             </button>
                           </Link>
                         </div>
-                        {loggedIn ? (
-                          <></>
-                        ) : (
+                        {!loggedIn ? (
                           <div className="tp-header-action-item">
                             <Link href="/authentication/login" prefetch={true}>
                               <button className="d-flex align-items-center btn btn-primary">
@@ -226,9 +292,6 @@ export default function Header() {
                               </button>
                             </Link>
                           </div>
-                        )}
-                        {!loggedIn ? (
-                          <></>
                         ) : (
                           <div className="tp-header-action-item d-none d-md-block">
                             <Link href="/profile" prefetch={true}>

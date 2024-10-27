@@ -321,3 +321,72 @@ span.swiper-pagination-bullet {
   gap: 1rem;
   list-style-type: none;
 }
+
+.search-form {
+  position: relative; /* Allows positioning of suggestions */
+}
+
+.search-input-container {
+  display: flex; /* Allows input and button to sit next to each other */
+  width: auto; /* Default width */
+  max-width: 400px; /* Adjust as needed */
+}
+
+.search-input {
+  flex: 1; /* Allows the input to take available space */
+  padding: 10px; /* Add some padding */
+  border: 1px solid #ccc; /* Border style */
+  border-radius: 5px; /* Rounded corners */
+  transition: width 0.3s; /* Smooth transition for width changes */
+}
+
+.search-input:focus {
+  width: 600px; /* Expand width when focused */
+  border-color: #007bff; /* Change border color on focus */
+}
+
+.search-suggestions {
+  position: absolute; /* Position suggestions below the input */
+  top: 100%; /* Align with the bottom of the input */
+  left: 0;
+  right: 0; /* Full width */
+  background-color: white; /* Background for suggestions */
+  border: 1px solid #ccc; /* Border style */
+  border-radius: 5px; /* Rounded corners */
+  z-index: 1000; /* Ensure suggestions appear above other elements */
+}
+
+
+.search-suggestions li:hover {
+  background-color: #f0f0f0; /* Highlight on hover */
+}
+
+.search-suggestions {
+  max-height: 200px; /* Set maximum height for scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+  border: 1px solid #ccc; /* Optional: border for suggestion box */
+  border-radius: 5px; /* Optional: rounded corners */
+  background-color: white; /* Background color for the suggestions */
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.search-suggestions ul {
+  list-style-type: none; /* Remove bullet points */
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
+}
+
+.search-suggestions li {
+  display: flex; /* Flex to align text and image */
+  align-items: center; /* Center items vertically */
+  padding: 10px; /* Add padding */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+
+.suggestion-image {
+  max-width: 50px; /* Set a maximum width for the image */
+  max-height: 50px; /* Set a maximum height for the image */
+  margin-left: 10px; /* Space between text and image */
+  object-fit: contain; /* Ensure the image maintains its aspect ratio */
+}

@@ -4,11 +4,12 @@ import React, { useEffect, useContext, useState } from "react";
 import { BiPlus, BiMinus } from "react-icons/bi";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { apiUrl } from "../api";
+import { apiUrl, getToken } from "../api";
 import { CartContext } from "../../context/CartContext";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Loader from "../utils/loader";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const Cart = () => {
   const { cartItems: initialCartItems, fetchCart } = useContext(CartContext);
@@ -24,18 +25,9 @@ const Cart = () => {
     setCouponCode(event.target.value);
   };
 
-  useEffect(() => {
-    const t = localStorage.getItem("token");
-    setToken(t);
-    if (!t) {
-      router.push("/authentication/login");
-    } else {
-      fetchCart();
-    }
-  }, []);
-
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     try {
       const response = await axios.post(
         `${apiUrl}/payments/check`,
@@ -64,6 +56,13 @@ const Cart = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    const token = getToken();
+    if (token) {
+      setToken(token);
+    }
+  }, []);
 
   useEffect(() => {
     setCartItems(initialCartItems);
@@ -99,10 +98,10 @@ const Cart = () => {
         theme: "light",
         transition: Bounce,
       });
-      setLoading(false);
     } catch (error) {
       console.error("Error updating cart item quantity:", error);
       setCartItems(initialCartItems);
+    } finally {
       setLoading(false);
     }
   };
@@ -130,7 +129,7 @@ const Cart = () => {
       });
       toast.success("Item Deleted successfully!", {
         position: "top-right",
-        autoClose: 5000,
+        autoClose: 100,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -143,6 +142,7 @@ const Cart = () => {
       setLoading(false);
     } catch (error) {
       console.error("Error deleting cart item:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -182,8 +182,6 @@ const Cart = () => {
     return 0;
   };
 
-  if (loading) return <Loader />;
-
   return (
     <>
       <section className="breadcrumb__area include-bg bg-light pt-95 pb-50">
@@ -221,54 +219,66 @@ const Cart = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {cartItems.map((item) => (
-                      <tr key={item.id}>
-                        <td className="tp-cart-img">
-                          <a href="#">
-                            <img
-                              src={item.productItem.images[0].url}
-                              alt={item.productItem.product.productName}
-                            />
-                          </a>
-                        </td>
-                        <td className="tp-cart-title">
-                          <a href="#">{item.productItem.product.productName}</a>
-                        </td>
-                        <td className="tp-cart-price">
-                          <span>₹{item.productItem.salePrice}</span>
-                        </td>
-                        <td className="tp-cart-quantity">
-                          <div className="tp-product-quantity mt-10 mb-10">
-                            <span
-                              className="tp-cart-minus"
-                              onClick={() => decreaseQuantity(item)}
-                            >
-                              <BiMinus />
-                            </span>
-                            <input
-                              className="tp-cart-input"
-                              type="text"
-                              value={item.quantity}
-                              readOnly
-                            />
-                            <span
-                              className="tp-cart-plus"
-                              onClick={() => increaseQuantity(item)}
-                            >
-                              <BiPlus />
-                            </span>
-                          </div>
-                        </td>
-                        <td className="tp-cart-action">
-                          <button
-                            className="tp-cart-action-btn"
-                            onClick={() => deleteCartItem(item.id)}
-                          >
-                            <span>Remove</span>
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {loading
+                      ? Array(3)
+                          .fill()
+                          .map((_, index) => (
+                            <tr key={index}>
+                              <td colSpan="5">
+                                <Skeleton height={80} />
+                              </td>
+                            </tr>
+                          ))
+                      : cartItems.map((item) => (
+                          <tr key={item.id}>
+                            <td className="tp-cart-img">
+                              <a href="#">
+                                <img
+                                  src={item.productItem.images[0].url}
+                                  alt={item.productItem.product.productName}
+                                />
+                              </a>
+                            </td>
+                            <td className="tp-cart-title">
+                              <a href="#">
+                                {item.productItem.product.productName}
+                              </a>
+                            </td>
+                            <td className="tp-cart-price">
+                              <span>₹{item.productItem.salePrice}</span>
+                            </td>
+                            <td className="tp-cart-quantity">
+                              <div className="tp-product-quantity mt-10 mb-10">
+                                <span
+                                  className="tp-cart-minus"
+                                  onClick={() => decreaseQuantity(item)}
+                                >
+                                  <BiMinus />
+                                </span>
+                                <input
+                                  className="tp-cart-input"
+                                  type="text"
+                                  value={item.quantity}
+                                  readOnly
+                                />
+                                <span
+                                  className="tp-cart-plus"
+                                  onClick={() => increaseQuantity(item)}
+                                >
+                                  <BiPlus />
+                                </span>
+                              </div>
+                            </td>
+                            <td className="tp-cart-action">
+                              <button
+                                className="tp-cart-action-btn"
+                                onClick={() => deleteCartItem(item.id)}
+                              >
+                                <span>Remove</span>
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
                   </tbody>
                 </table>
               </div>
@@ -280,40 +290,47 @@ const Cart = () => {
                   <span className="tp-cart-checkout-top-price">
                     {" "}
                     ₹
-                    {cartItems.reduce(
-                      (total, item) =>
-                        total + item.productItem.salePrice * item.quantity,
-                      0
+                    {loading ? (
+                      <Skeleton width={50} />
+                    ) : (
+                      cartItems.reduce(
+                        (total, item) =>
+                          total + item.productItem.salePrice * item.quantity,
+                        0
+                      )
                     )}
                   </span>
                 </div>
                 {discountDetails && (
                   <div className="tp-cart-checkout-discount d-flex align-items-center justify-content-between">
                     <span>Discount</span>
-                    <span> - ₹{calculateDiscountAmount().toFixed(2)}</span>
+                    <span>
+                      {" "}
+                      {loading ? (
+                        <Skeleton width={50} />
+                      ) : (
+                        "- ₹" + calculateDiscountAmount().toFixed(2)
+                      )}
+                    </span>
                   </div>
                 )}
-                <div className="tp-cart-checkout-shipping">
-                  <div className="tp-cart-checkout-shipping-option-wrapper">
-                    <div className="tp-cart-checkout-shipping-option">
-                      <input
-                        id="free_shipping"
-                        checked
-                        type="radio"
-                        name="shipping"
-                      />
-                      <label htmlFor="free_shipping">Free shipping</label>
-                    </div>
-                  </div>
-                </div>
                 <div className="tp-cart-checkout-total d-flex align-items-center justify-content-between">
                   <span>Total</span>
-                  <span> ₹{calculateTotalPrice().toFixed(2)}</span>
+                  <span>
+                    {" "}
+                    ₹
+                    {loading ? (
+                      <Skeleton width={50} />
+                    ) : (
+                      calculateTotalPrice().toFixed(2)
+                    )}
+                  </span>
                 </div>
                 <div className="tp-cart-checkout-proceed">
                   <button
                     className="tp-cart-checkout-btn w-100"
                     onClick={() => router.push("/checkout")}
+                    disabled={loading}
                   >
                     Proceed to Checkout
                   </button>

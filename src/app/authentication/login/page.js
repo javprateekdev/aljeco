@@ -13,6 +13,7 @@ import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../utils/loader";
 import { useDispatch } from "react-redux";
+import Cookies from "js-cookie";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,8 +44,9 @@ const Login = () => {
         email,
         password,
       });
-      console.log("response", response);
+
       const { token } = response.data;
+      Cookies.set("is_user_token", token);
       dispatch(
         login({
           token,

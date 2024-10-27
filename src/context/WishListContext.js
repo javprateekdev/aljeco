@@ -4,7 +4,7 @@ import axios from "axios";
 import { apiUrl } from "@/app/api";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { getToken } from "@/app/api";
 // Create the WishList context
 export const WishListContext = createContext();
 
@@ -12,9 +12,15 @@ export const WishListProvider = ({ children }) => {
   const [wishListItems, setWishListItems] = useState([]);
   const [token, setToken] = useState("");
 
+  useEffect(() => {
+    const token = getToken();
+    if (token) {
+      setToken(token);
+    }
+  }, [token]);
+
   // Fetch wishlist items from the API
-  const fetchWishlist = async (t) => {
-    console.log("token", token);
+  const fetchWishlist = async () => {
     try {
       const response = await axios.get(`${apiUrl}/wishlist`, {
         headers: {
@@ -55,15 +61,6 @@ export const WishListProvider = ({ children }) => {
       console.error("Error adding item to wishlist:", error);
     }
   };
-
-  useEffect(() => {
-    const t = localStorage.getItem("token");
-
-    if (t) {
-      setToken(t);
-      fetchWishlist(t);
-    }
-  }, [token]);
 
   return (
     <WishListContext.Provider

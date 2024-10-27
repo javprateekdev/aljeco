@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-
+import { getToken } from "@/app/api";
 // Create a context for authentication
 const AuthContext = createContext();
 
@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
 
   // Load token from local storage on initial render
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+    const storedToken = getToken();
     if (storedToken) {
       setToken(storedToken);
       // Optionally, fetch user data if token exists

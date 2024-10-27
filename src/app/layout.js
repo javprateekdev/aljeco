@@ -14,10 +14,7 @@ import { Provider } from "react-redux";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// export const metadata = {
-//   title: "Aljeco",
-//   description: "Ecommerce-Shop",
-// };
+
 
 export default function RootLayout({ children }) {
   return (
