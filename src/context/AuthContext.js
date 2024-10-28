@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
+import Cookies from "js-cookie";
 import { getToken } from "@/app/api";
 // Create a context for authentication
 const AuthContext = createContext();
@@ -8,19 +9,22 @@ const AuthContext = createContext();
 export const useAuth = () => {
   return useContext(AuthContext);
 };
-
+export const useIsLoggedIn = () => {
+  const { token } = useAuth();
+  return !!token; // Returns true if the token exists, false otherwise
+};
 // Provider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState("");
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   // Load token from local storage on initial render
   useEffect(() => {
     const storedToken = getToken();
     if (storedToken) {
       setToken(storedToken);
-      // Optionally, fetch user data if token exists
       fetchUser(storedToken);
+      setIsLoggedIn(true);
     }
   }, []);
 
@@ -58,12 +62,24 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setToken("");
     setUser(null);
+    setIsLoggedIn(false);
     localStorage.removeItem("token");
+    Cookies.remove("is_user_token");
   };
 
   // Provide the user and authentication functions
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, fetchUser }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        login,
+        logout,
+        fetchUser,
+        isLoggedIn,
+        setIsLoggedIn,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -8,8 +8,6 @@ import Loader from "../utils/loader";
 const CheckoutPage = () => {
   const { cartItems } = useContext(CartContext);
   const { token } = useAuth();
-  console.log("token", token);
-
   const [user, setUser] = useState({});
   const [discountAmount, setDiscountAmount] = useState(0);
   const [addresses, setAddresses] = useState([]);

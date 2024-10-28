@@ -10,6 +10,7 @@ import axios from "axios";
 import Image from "next/image";
 import { apiUrl } from "../api";
 const ViewProfile = () => {
+  
   const router = useRouter();
   const { token, logout } = useAuth();
   const { wishListItems } = useContext(WishListContext);
@@ -17,7 +18,6 @@ const ViewProfile = () => {
   const [addressCount, setAddressCount] = useState(0);
   const [ordersCount, setOrdersCount] = useState(0);
 
-  console.log("user", user);
   const getUser = async (u) => {
     if (!token) return null;
     const response = await axios.get(`${apiUrl}/users/me`, {

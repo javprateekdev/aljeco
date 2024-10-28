@@ -26,6 +26,7 @@ import { BiUser } from "react-icons/bi";
 import Link from "next/link";
 import { apiUrl, getToken } from "@/app/api";
 import axios from "axios";
+import { useAuth } from "@/context/AuthContext";
 export default function Header() {
   const { cartItems, fetchCart } = useContext(CartContext);
   const [activeMenu, setActiveMenu] = useState("");
@@ -34,9 +35,9 @@ export default function Header() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
-  console.log("filteredProducts", filteredProducts);
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (token) {
       setLoggedIn(true);
       fetchCart();
@@ -56,9 +57,15 @@ export default function Header() {
     router.push(path);
   };
 
+  const token = getToken();
   const userMe = async () => {
     try {
-      const req = await axios.get(`${apiUrl}/users/me`);
+      const req = await axios.get(`${apiUrl}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       console.log("req", req);
     } catch (error) {
       console.log("error", error);
@@ -251,7 +258,7 @@ export default function Header() {
                         <div className="tp-header-action-item d-none d-lg-block">
                           <Link
                             href={
-                              loggedIn ? "/wishlist" : "/authentication/login"
+                              isLoggedIn ? "/wishlist" : "/authentication/login"
                             }
                             prefetch={true}
                           >
@@ -270,7 +277,7 @@ export default function Header() {
                         </div>
                         <div className="tp-header-action-item d-none d-xl-block">
                           <Link
-                            href={loggedIn ? "/cart" : "/authentication/login"}
+                            href={isLoggedIn ? "/cart" : "/authentication/login"}
                             prefetch={true}
                           >
                             <button className="tp-header-action-btn cartmini-open-btn">
@@ -281,7 +288,7 @@ export default function Header() {
                             </button>
                           </Link>
                         </div>
-                        {!loggedIn ? (
+                        {!isLoggedIn ? (
                           <div className="tp-header-action-item">
                             <Link href="/authentication/login" prefetch={true}>
                               <button className="d-flex align-items-center btn btn-primary">

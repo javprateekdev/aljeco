@@ -1,6 +1,27 @@
-import React from "react";
-
+"use client";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { apiUrl, getToken } from "../api";
+import moment from "moment";
 const MyOrders = () => {
+  const [orders, setOrders] = useState([]);
+  console.log("orders", orders);
+  const getOrders = async () => {
+    try {
+      const token = getToken();
+      const data = await axios.get(`${apiUrl}/users/orders`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setOrders(data.data);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    getOrders();
+  }, []);
+
   return (
     <>
       <div className="tp-order-inner">
@@ -9,36 +30,22 @@ const MyOrders = () => {
             <thead>
               <tr>
                 <th scope="col">Order Id</th>
-                <th scope="col">Product Title</th>
+                <th scope="col">Placed At</th>
                 <th scope="col">Status</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th scope="row"> #2245</th>
-                <td data-info="title">How can i share ?</td>
-                <td data-info="status pending">Pending </td>
-              </tr>
-              <tr>
-                <th scope="row"> #2220</th>
-                <td data-info="title">Send money, but not working</td>
-                <td data-info="status reply">Cancel</td>
-              </tr>
-              <tr>
-                <th scope="row"> #2125</th>
-                <td data-info="title">Balance error</td>
-                <td data-info="status done">Delivered</td>
-              </tr>
-              <tr>
-                <th scope="row"> #2124</th>
-                <td data-info="title">How to decline bid</td>
-                <td data-info="status hold">On Hold</td>
-              </tr>
-              <tr>
-                <th scope="row"> #2121</th>
-                <td data-info="title">How to contact</td>
-                <td data-info="status done">Delivered</td>
-              </tr>
+              {orders.map((item, index) => {
+                return (
+                  <tr key={index}>
+                    <th scope="row"> {item.id}</th>
+                    <td data-info="title">
+                      {moment(item.createdAt).format("lll")}
+                    </td>
+                    <td data-info="status pending"> {item.status}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

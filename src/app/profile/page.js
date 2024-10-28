@@ -18,7 +18,6 @@ const Profile = () => {
   useEffect(() => {
     fetchUser();
   }, []);
-  console.log("user", user);
   return (
     <>
       <section className="pt-120 pb-60">
@@ -46,9 +45,9 @@ const Profile = () => {
                     <Nav.Item className="mb-2">
                       <Nav.Link eventKey="trackorder">Track Order</Nav.Link>
                     </Nav.Item>
-                    <Nav.Item className="mb-2">
+                    {/* <Nav.Item className="mb-2">
                       <Nav.Link eventKey="changepass">Change Password</Nav.Link>
-                    </Nav.Item>
+                    </Nav.Item> */}
                   </Nav>
                 </div>
               </div>

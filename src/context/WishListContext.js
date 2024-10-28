@@ -10,16 +10,8 @@ export const WishListContext = createContext();
 
 export const WishListProvider = ({ children }) => {
   const [wishListItems, setWishListItems] = useState([]);
-  const [token, setToken] = useState("");
-
-  useEffect(() => {
-    const token = getToken();
-    if (token) {
-      setToken(token);
-    }
-  }, [token]);
-
   // Fetch wishlist items from the API
+  const token = getToken();
   const fetchWishlist = async () => {
     try {
       const response = await axios.get(`${apiUrl}/wishlist`, {

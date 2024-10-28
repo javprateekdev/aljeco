@@ -13,6 +13,7 @@ import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Loader from "../../utils/loader";
 import { useDispatch } from "react-redux";
+import { useAuth } from "@/context/AuthContext";
 import Cookies from "js-cookie";
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,7 +23,7 @@ const Login = () => {
   const [isMounted, setIsMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -47,6 +48,7 @@ const Login = () => {
 
       const { token } = response.data;
       Cookies.set("is_user_token", token);
+      setIsLoggedIn(true);
       dispatch(
         login({
           token,
@@ -67,6 +69,7 @@ const Login = () => {
         transition: Bounce,
       });
       setLoading(false);
+      router.push("/");
     } catch (err) {
       // Handle error
       setError("Login failed. Please check your credentials.");
