@@ -393,3 +393,7 @@ span.swiper-pagination-bullet {
   margin-left: 10px; /* Space between text and image */
   object-fit: contain; /* Ensure the image maintains its aspect ratio */
 }
+
+/* styles/globals.css or styles/Page.module.css */
+
+

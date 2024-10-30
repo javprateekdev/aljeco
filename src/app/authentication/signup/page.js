@@ -10,8 +10,11 @@ import { apiUrl } from "@/app/api";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import Cookies from "js-cookie";
 const SignUp = () => {
   const router = useRouter();
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -19,7 +22,6 @@ const SignUp = () => {
     phone: "",
     password: "",
   });
-
   const [errors, setErrors] = useState({
     firstname: "",
     lastname: "",
@@ -104,6 +106,8 @@ const SignUp = () => {
           transition: Bounce,
         });
         localStorage.setItem("token", response.data.accessToken);
+        Cookies.set("is_user_token", response.data.accessToken);
+        setIsLoggedIn(true);
         router.push("/");
         if (response.status == 500) {
           toast.error(response.message, {

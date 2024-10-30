@@ -1,6 +1,6 @@
 "use client";
 import Cookies from "js-cookie";
-export const apiUrl = "https://api.aljeco.in";
+export const apiUrl = "http:localhost:9001";
 // utils/axiosInstance.js
 
 export const setAuthCookie = () => {
