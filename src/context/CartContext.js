@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { apiUrl } from "@/app/api";
 import { toast, Bounce } from "react-toastify";
@@ -10,15 +10,10 @@ export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
-  const [token, setToken] = useState("");
+  const token = getToken();
 
-  useEffect(() => {
-    const token = getToken();
-    setToken(token);
-  }, []);
-
-  const fetchCart = async () => {
-    const token = getToken();
+  // Memoize fetchCart to prevent multiple re-renders from triggering it
+  const fetchCart = useCallback(async () => {
     try {
       const response = await axios.get(`${apiUrl}/cart`, {
         headers: {
@@ -26,12 +21,11 @@ export const CartProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
       });
-
       setCartItems(response.data.cartItems);
     } catch (error) {
       console.error("Error fetching cart data:", error);
     }
-  };
+  }, [token]); // Depend on `token` to update only when it changes
 
   const addToCart = async (item) => {
     try {
@@ -41,24 +35,13 @@ export const CartProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
       });
-      toast.success("Item Added To Card!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
       if (response.status === 201) {
-        fetchCart();
+        // Update cart items locally without refetching
+        setCartItems((prevItems) => [...prevItems, response.data.item]);
       }
-      fetchCart();
     } catch (error) {
       console.error("Error adding item to cart:", error);
-      toast.success(error.message, {
+      toast.error("Failed to add item to cart. Please try again.", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -71,6 +54,10 @@ export const CartProvider = ({ children }) => {
       });
     }
   };
+
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]); // Call only once on mount with memoized `fetchCart`
 
   return (
     <CartContext.Provider value={{ cartItems, fetchCart, addToCart }}>

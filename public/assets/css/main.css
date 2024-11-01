@@ -13618,7 +13618,7 @@ div.tp-blog-thumb img {
   cursor: pointer;
 }
 .tp-login-input-eye:hover span {
-  color: var(--tp-common-black);
+  color: var();
 }
 .tp-login-remeber input {
   display: none;
@@ -13674,7 +13674,7 @@ div.tp-blog-thumb img {
   transition: all 0.2s 0s ease-out;
 }
 .tp-login-remeber label a:hover {
-  color: var(--tp-theme-primary);
+  color:#ddc0b4;
 }
 .tp-login-remeber label:hover {
   cursor: pointer;
@@ -13709,10 +13709,12 @@ div.tp-blog-thumb img {
   padding: 14px 30px;
   text-align: center;
   display: inline-block;
+  border-radius: 15px;
 }
 .tp-login-btn:hover {
   background-color: var(--tp-theme-primary);
   color: var(--tp-common-white);
+  border-radius:15px
 }
 .tp-login-shape-1,
 .tp-login-shape-2,
@@ -19922,15 +19924,15 @@ product all slider
 .tp-shop-widget-title {
   font-weight: 500;
   font-size: 18px;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #ebe2e2;
   padding-bottom: 5px;
   margin-bottom: 25px;
 }
-.tp-shop-widget-title.no-border {
+/* .tp-shop-widget-title.no-border {
   border: 0;
   padding-bottom: 0;
   margin-bottom: 14px;
-}
+} */
 .tp-shop-widget-filter .ui-widget.ui-widget-content {
   height: 3px;
   background-color: #ededed;

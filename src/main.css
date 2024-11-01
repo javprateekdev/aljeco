@@ -1,6 +1,7 @@
 /*----------------------------------------*/
 /*  1.1 Theme Default
 /*----------------------------------------*/
+
 @import url("https://fonts.googleapis.com/css2?family=Charm:wght@400;700&amp;family=Jost:wght@300;400;500;600;700&amp;family=Oregano&amp;family=Roboto:wght@300;400;500;700;900&amp;display=swap");
 
 .tp-coupon-info-details span,
@@ -11799,9 +11800,9 @@ div.tp-blog-thumb img {
   height: 38px;
   line-height: 38px;
   text-align: center;
-  background: #ffffff;
-  box-shadow: 0px 1px 1px rgba(1, 15, 28, 0.2);
+  background: #F4F7F9;
   border-radius: 6px;
+  border:none
 }
 
 .tp-footer-social a:hover {
@@ -11912,7 +11913,7 @@ div.tp-blog-thumb img {
 }
 
 .tp-footer-style-2 .tp-footer-social a {
-  border: 1px solid #d9dbde;
+  border: none;
   box-shadow: none;
   border-radius: 0;
 }
@@ -15251,7 +15252,7 @@ div.tp-blog-thumb img {
 }
 
 .tp-login-input-eye:hover span {
-  color: var(--tp-common-black);
+  color: #ddc0b4;
 }
 
 .tp-login-remeber input {
@@ -15354,11 +15355,13 @@ div.tp-blog-thumb img {
   padding: 14px 30px;
   text-align: center;
   display: inline-block;
+  border-radius: 15px;
 }
 
 .tp-login-btn:hover {
   color: var(--tp-theme-secondary);
   background-color: var(--tp-common-black);
+  border-radius: 15px;
 }
 
 .tp-login-shape-1,
@@ -22626,14 +22629,14 @@ product all slider
 .tp-shop-widget-title {
   font-weight: 500;
   font-size: 18px;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #ebe2e2;
 }
 
-.tp-shop-widget-title.no-border {
+/* .tp-shop-widget-title.no-border {
   border: 0;
   padding-bottom: 0;
   margin-bottom: 14px;
-}
+} */
 
 .tp-shop-widget-filter .ui-widget.ui-widget-content {
   height: 3px;
@@ -26940,3 +26943,32 @@ product all slider
 @import url(./responsive.css);
 
 /*# sourceMappingURL=main.css.map */
+
+.social-icon {
+  width: 30px;
+  height: 30px;
+ 
+}
+
+.filter-shadow{
+  box-shadow: 0px 30px 70px rgb(141 141 141);
+  padding:15px;
+  margin-bottom: 10px;
+}
+
+.react-tel-input .form-control {
+  position: relative;
+  font-size: 14px;
+  letter-spacing: .01rem;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-left: 48px;
+  margin-left: 0;
+  background: #FFFFFF;
+  border: 1px solid #CACACA;
+  border-radius: 5px;
+  line-height: 25px;
+  width: 100% !important;
+  outline: none;
+  height:initial
+}

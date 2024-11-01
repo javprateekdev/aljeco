@@ -39,7 +39,6 @@ export const AuthProvider = ({ children }) => {
         },
       });
       const data = await response.json();
-      console.log("userdata", data);
       if (response.ok) {
         setUser(data);
       } else {
@@ -54,7 +53,6 @@ export const AuthProvider = ({ children }) => {
   // Function to log in
   const login = (authToken) => {
     setToken(authToken);
-    localStorage.setItem("token", authToken);
     fetchUser(authToken);
   };
 
@@ -63,7 +61,6 @@ export const AuthProvider = ({ children }) => {
     setToken("");
     setUser(null);
     setIsLoggedIn(false);
-    localStorage.removeItem("token");
     Cookies.remove("is_user_token");
   };
 

@@ -35,17 +35,7 @@ export const WishListProvider = ({ children }) => {
           "Content-Type": "application/json",
         },
       });
-      toast.success("Item Added To Wishlist!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+
       if (response.status === 201) {
         fetchWishlist(); // Refetch wishlist after adding the item
       }

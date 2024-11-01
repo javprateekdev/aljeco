@@ -84,15 +84,10 @@ const ShopContent = () => {
 
   return (
     <>
-      <section className="tp-shop-area pt-40 pb-60">
+      <section className="tp-shop-area pt-20">
         <div className="container">
           <Tab.Container id="left-tabs-example" defaultActiveKey="all">
-            <Nav className="gap-2" variant="pills">
-              <Nav.Item>
-                <Nav.Link eventKey="all">All</Nav.Link>
-              </Nav.Item>
-            </Nav>
-            <Tab.Content className="pt-40">
+            <Tab.Content>
               <Tab.Pane eventKey="all">
                 <div className="row">
                   <div className="col-xl-3 col-lg-4 d-none d-md-block">
@@ -102,7 +97,6 @@ const ShopContent = () => {
                     <div className="tp-shop-main-wrapper">
                       <div className="tp-shop-top mb-45">
                         <div className="row">
-                          <div className="col-xl-6"></div>
                           <div className="col-xl-6">
                             <div className="tp-shop-top-right d-flex align-items-center justify-content-between justify-content-md-end ">
                               <div className="d-block d-md-none tp-shop-top-filter">

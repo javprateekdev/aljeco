@@ -12,6 +12,8 @@ import Reviews from "../reviews";
 import Loader from "@/app/utils/loader";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ProductDetailsSkeleton from "./productDetailSkeleton";
+
 const ProductDetails = ({ params }) => {
   const { id } = params; // Getting the product id from the route parameters
   const [product, setProduct] = useState({});
@@ -89,7 +91,7 @@ const ProductDetails = ({ params }) => {
       });
   }, [id]); // Dependency array to trigger this effect when the `id` changes
 
-  if (loading) return <Loader />;
+  if (loading) return <ProductDetailsSkeleton />;
 
   return (
     <>

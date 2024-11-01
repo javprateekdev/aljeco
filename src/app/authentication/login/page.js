@@ -6,7 +6,7 @@ import "../../../spacing.css";
 import Link from "next/link";
 import axios from "axios";
 import { login } from "../../../Redux/userSlice";
-import { apiUrl } from "@/app/api";
+import { apiUrl, getToken } from "@/app/api";
 import { useRouter } from "next/navigation";
 import { MdLogin } from "react-icons/md";
 import { toast, Bounce } from "react-toastify";
@@ -15,31 +15,46 @@ import Loader from "../../utils/loader";
 import { useDispatch } from "react-redux";
 import { useAuth } from "@/context/AuthContext";
 import Cookies from "js-cookie";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loggedin, setLoggedIn] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
+  const [emailError, setEmailError] = useState(""); // Error state for email
+  const [passwordError, setPasswordError] = useState(""); // Error state for password
+  const [error, setError] = useState(""); // General error state
   const [loading, setLoading] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const dispatch = useDispatch();
 
   useEffect(() => {
     setIsMounted(true);
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (token) {
-      router.push("/");
+      setIsLoggedIn(true);
+      router.push("/"); // Redirect if the user is already logged in
     }
-    if (loggedin) {
-      router.push("/");
-    }
-  }, [loggedin, router]);
+  }, [router, setIsLoggedIn]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    setEmailError("");
+    setPasswordError("");
     setLoading(true);
+
+    if (!email) {
+      setEmailError("Email is required");
+      setLoading(false);
+      return;
+    }
+    if (!password) {
+      setPasswordError("Password is required");
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await axios.post(`${apiUrl}/auth/login`, {
         email,
@@ -47,49 +62,20 @@ const Login = () => {
       });
 
       const { token } = response.data;
-      Cookies.set("is_user_token", token);
-      setIsLoggedIn(true);
-      dispatch(
-        login({
-          token,
-        })
-      );
       if (token) {
-        setLoggedIn(true);
+        Cookies.set("is_user_token", token);
+        setIsLoggedIn(true);
+        dispatch(login({ email }));
+        setLoading(false);
+        router.push("/"); // Redirect after successful login
       }
-      toast.success("Login successfully!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      setLoading(false);
-      router.push("/");
     } catch (err) {
-      // Handle error
-      setError("Login failed. Please check your credentials.");
-      console.error("Login error:", err);
-      toast.error(err.message, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      setError(err.response.data.message);
       setLoading(false);
     }
   };
 
-  if (loading) return <Loader />;
+  if (!isMounted || isLoggedIn) return <Loader />;
 
   return (
     <>
@@ -135,7 +121,7 @@ const Login = () => {
               <div className="tp-login-wrapper">
                 <div className="tp-login-top text-center mb-50">
                   <h3 className="d-flex align-items-center justify-content-center tp-login-title gap-2 py-2">
-                    <Link className="d-block" href="/">
+                    <Link className="d-block" href="/" prefetch={true}>
                       <img
                         src="/assets/img/logo/logo.png"
                         alt="logo"
@@ -165,13 +151,19 @@ const Login = () => {
                             type="email"
                             placeholder="shofy@mail.com"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => {
+                              setEmail(e.target.value);
+                              setEmailError(""); // Reset error when user types
+                            }}
                             required
                           />
                         </div>
                         <div className="tp-login-input-title">
                           <label htmlFor="email">Your Email</label>
                         </div>
+                        {emailError && (
+                          <p className="text-danger">{emailError}</p>
+                        )}
                       </div>
                       <div className="tp-login-input-box">
                         <div className="tp-login-input">
@@ -180,36 +172,28 @@ const Login = () => {
                             type="password"
                             placeholder="Min. 6 character"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) => {
+                              setPassword(e.target.value);
+                              setPasswordError(""); // Reset error when user types
+                            }}
                             required
                           />
                         </div>
                         <div className="tp-login-input-title">
                           <label htmlFor="tp_password">Password</label>
                         </div>
+                        {passwordError && (
+                          <p className="text-danger">{passwordError}</p>
+                        )}
                       </div>
                     </div>
-                    {/* <div className="tp-login-suggetions d-sm-flex align-items-center justify-content-between mb-20">
-                       <div className="tp-login-remeber">
-                        <input
-                          id="remember"
-                          type="checkbox"
-                          checked={rememberMe}
-                          onChange={(e) => setRememberMe(e.target.checked)}
-                        />
-                        <label htmlFor="remember">Remember me</label>
-                      </div> 
-                      <div className="tp-login-forgot">
-                        <Link href="#">Forgot Password?</Link>
-                      </div>
-                    </div> */}
                     <div className="tp-login-bottom">
                       <button type="submit" className="tp-login-btn w-100">
                         <MdLogin style={{ fontSize: "18px" }} /> Login
                       </button>
                     </div>
                     {error && <p className="text-danger">{error}</p>}{" "}
-                    {/* Display error message */}
+                    {/* General error */}
                   </div>
                 </form>
               </div>

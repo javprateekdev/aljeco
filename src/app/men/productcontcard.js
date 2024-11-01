@@ -1,20 +1,19 @@
-import React, { useState, useContext, useEffect } from "react";
+"use-client";
+import React, { useContext } from "react";
 import { BsCartDash, BsEye, BsHeart, BsStarFill } from "react-icons/bs";
-import { useRouter } from "next/navigation"; // Use useRouter from next/navigation
+import Link from "next/link";
 import { CartContext } from "../../context/CartContext";
 import { WishListContext } from "@/context/WishListContext";
+import { useAuth } from "@/context/AuthContext";
+import { getToken } from "../api";
+import { useRouter } from "next/navigation";
 
 const ProductContCard = ({ product }) => {
   const { addToCart } = useContext(CartContext);
   const { addToWishList } = useContext(WishListContext);
+  const token = getToken();
   const router = useRouter();
-
-  const [token, setToken] = useState("");
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token);
-  }, []);
-  // Handle adding product to the cart
+  
   const handleAddToCart = () => {
     if (!token) {
       router.push("/authentication/login");
@@ -24,11 +23,10 @@ const ProductContCard = ({ product }) => {
         quantity: 1,
         priceAtTime: product.productItems[0].salePrice,
       };
-      addToCart(item); // Add the product to the cart using the context
+      addToCart(item);
     }
   };
 
-  // Handle adding product to the wishlist
   const handleAddToWishList = () => {
     if (!token) {
       router.push("/authentication/login");
@@ -38,51 +36,50 @@ const ProductContCard = ({ product }) => {
         quantity: 1,
         priceAtTime: product.productItems[0].salePrice,
       };
-      addToWishList(item); // Add the product to the wishlist using the context
+      addToWishList(item);
     }
   };
 
   return (
     <div className="tp-product-item-2">
       <div className="tp-product-thumb-2 p-relative z-index-1 fix w-img">
-        <button
-          type="button"
-          onClick={() => router.push(`/men/${product.productId}`)} // Use router.push for navigation
-          className="tp-product-image-button"
-        >
-          <img
-            src={product?.productItems[0]?.images[0]?.url}
-            alt={product.productName}
-          />
-        </button>
+        <Link href={`/men/${product.productId}`} prefetch={true}>
+          <button type="button" className="tp-product-image-button">
+            <img
+              src={product?.productItems[0]?.images[0]?.url}
+              alt={product.productName}
+            />
+          </button>
+        </Link>
         <div className="tp-product-action-2 tp-product-action-blackStyle">
           <div className="tp-product-action-item-2 d-flex flex-column">
             <button
               type="button"
               className="tp-product-action-btn-2 tp-product-add-cart-btn"
-              onClick={handleAddToCart} // Attach the click event handler for cart
+              onClick={handleAddToCart}
             >
               <BsCartDash />
               <span className="tp-product-tooltip tp-product-tooltip-right">
                 Add to Cart
               </span>
             </button>
-            <button
-              type="button"
-              className="tp-product-action-btn-2 tp-product-quick-view-btn"
-              onClick={() => router.push(`/men/${product.productId}`)} // Navigate to product details page
-              data-bs-toggle="modal"
-              data-bs-target="#producQuickViewModal"
-            >
-              <BsEye />
-              <span className="tp-product-tooltip tp-product-tooltip-right">
-                Quick View
-              </span>
-            </button>
+            <Link href={`/men/${product.productId}`} prefetch={true}>
+              <button
+                type="button"
+                className="tp-product-action-btn-2 tp-product-quick-view-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#producQuickViewModal"
+              >
+                <BsEye />
+                <span className="tp-product-tooltip tp-product-tooltip-right">
+                  Quick View
+                </span>
+              </button>
+            </Link>
             <button
               type="button"
               className="tp-product-action-btn-2 tp-product-add-to-wishlist-btn"
-              onClick={handleAddToWishList} // Attach the click event handler for wishlist
+              onClick={handleAddToWishList}
             >
               <BsHeart />
               <span className="tp-product-tooltip tp-product-tooltip-right">
@@ -100,22 +97,18 @@ const ProductContCard = ({ product }) => {
           <span>(23)</span>
         </div>
         <h3 className="tp-product-title-2 mt-10">
-          <button
-            type="button"
-            onClick={() => router.push(`/men/${product.productId}`)} // Navigate to product details page
-            className="tp-product-title-button"
-          >
-            {product.productName}
-          </button>
+          <Link href={`/men/${product.productId}`} prefetch={true}>
+            <button type="button" className="tp-product-title-button">
+              {product.productName}
+            </button>
+          </Link>
         </h3>
         <div className="tp-product-tag-2">
-          <button
-            type="button"
-            onClick={() => router.push(`/men/${product.productId}`)} // Navigate to product details page
-            className="tp-product-description-button"
-          >
-            {product.productDescription}
-          </button>
+          <Link href={`/men/${product.productId}`} prefetch={true}>
+            <button type="button" className="tp-product-description-button">
+              {product.productDescription}
+            </button>
+          </Link>
         </div>
         <div className="tp-product-price-wrapper-2">
           <span className="tp-product-price-2 old-price me-2">₹200.00</span>

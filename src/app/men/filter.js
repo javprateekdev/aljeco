@@ -3,12 +3,12 @@ import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { apiUrl } from "../api";
 import { useFilter } from "../../context/FilterContext";
-import Skeleton from "react-loading-skeleton"; // Import Skeleton
-import "react-loading-skeleton/dist/skeleton.css"; // Import default styles
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const Filter = () => {
   const { checkedFilters, updateCheckedFilters } = useFilter();
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true); 
   const [bodyFits, setBodyFits] = useState([]);
   const [colours, setColours] = useState([]);
   const [dressTypes, setDressTypes] = useState([]);
@@ -29,231 +29,69 @@ const Filter = () => {
       setSeasons(response.data.seasons);
       setSleeveLength(response.data.sleeveLengths);
       setStyles(response.data.styles);
-      setLoading(false); // Data loaded, stop showing skeletons
+      setLoading(false); 
     } catch (error) {
       console.error("Error fetching the filters:", error);
-      setLoading(false); // Stop skeletons even on error
+      setLoading(false); 
     }
   };
 
   useEffect(() => {
-    if (colours.length === 0) {
-      fetchData();
-    }
-  }, [colours.length]);
+    fetchData();
+  }, []);
 
-  const bodyList = useMemo(() => {
-    return loading ? (
-      <Skeleton count={4} height={20} />
-    ) : (
-      bodyFits.map((item) => (
-        <li key={item.bodyId}>
-          <label className="d-flex align-items-center gap-1 ">
-            <span className="d-flex justify-content-between w-100">
-              {item.name}
-            </span>
-            <input
-              type="checkbox"
-              checked={checkedFilters.bodyFits.includes(item.bodyId)}
-              onChange={() => updateCheckedFilters("bodyFits", item.bodyId)}
-            />
-          </label>
-        </li>
-      ))
-    );
-  }, [bodyFits, checkedFilters.bodyFits, updateCheckedFilters, loading]);
+  const renderSkeleton = () => <Skeleton count={4} height={20} />;
 
-  const colourList = useMemo(() => {
-    return loading ? (
-      <Skeleton count={4} height={20} />
-    ) : (
-      colours.map((item) => (
-        <li key={item.colourId}>
-          <label className="d-flex align-items-center gap-1 ">
-            <span className="d-flex justify-content-between w-100">
-              {item.colourName}
-            </span>
-            <input
-              type="checkbox"
-              checked={checkedFilters.colours.includes(item.colourId)}
-              onChange={() => updateCheckedFilters("colours", item.colourId)}
-            />
-          </label>
-        </li>
-      ))
-    );
-  }, [colours, checkedFilters.colours, updateCheckedFilters, loading]);
-
-  const dressTypeList = useMemo(() => {
-    return loading ? (
-      <Skeleton count={4} height={20} />
-    ) : (
-      dressTypes.map((item) => (
-        <li key={item.dressId}>
-          <label className="d-flex align-items-center gap-1 ">
-            <span className="d-flex justify-content-between w-100">
-              {item.name}
-            </span>
-            <input
-              type="checkbox"
-              checked={checkedFilters.dressTypes.includes(item.dressId)}
-              onChange={() => updateCheckedFilters("dressTypes", item.dressId)}
-            />
-          </label>
-        </li>
-      ))
-    );
-  }, [dressTypes, checkedFilters.dressTypes, updateCheckedFilters, loading]);
-
-  const lengthList = useMemo(() => {
-    return loading ? (
-      <Skeleton count={4} height={20} />
-    ) : (
-      lengths.map((item) => (
-        <li key={item.lengthId}>
-          <label className="d-flex align-items-center gap-1 ">
-            <span className="d-flex justify-content-between w-100">
-              {item.name}
-            </span>
-            <input
-              type="checkbox"
-              checked={checkedFilters.lengths.includes(item.lengthId)}
-              onChange={() => updateCheckedFilters("lengths", item.lengthId)}
-            />
-          </label>
-        </li>
-      ))
-    );
-  }, [lengths, checkedFilters.lengths, updateCheckedFilters, loading]);
-
-  const neckLineList = useMemo(() => {
-    return loading ? (
-      <Skeleton count={4} height={20} />
-    ) : (
-      neckLines.map((item) => (
-        <li key={item.neckLineId}>
-          <label className="d-flex align-items-center gap-1 ">
-            <span className="d-flex justify-content-between w-100">
-              {item.name}
-            </span>
-            <input
-              type="checkbox"
-              checked={checkedFilters.neckLines.includes(item.neckLineId)}
-              onChange={() =>
-                updateCheckedFilters("neckLines", item.neckLineId)
-              }
-            />
-          </label>
-        </li>
-      ))
-    );
-  }, [neckLines, checkedFilters.neckLines, updateCheckedFilters, loading]);
-
-  const seasonList = useMemo(() => {
-    return loading ? (
-      <Skeleton count={4} height={20} />
-    ) : (
-      seasons.map((item) => (
-        <li key={item.seasonId}>
-          <label className="d-flex align-items-center gap-1 ">
-            <span className="d-flex justify-content-between w-100">
-              {item.name}
-            </span>
-            <input
-              type="checkbox"
-              checked={checkedFilters.seasons.includes(item.seasonId)}
-              onChange={() => updateCheckedFilters("seasons", item.seasonId)}
-            />
-          </label>
-        </li>
-      ))
-    );
-  }, [seasons, checkedFilters.seasons, updateCheckedFilters, loading]);
-
-  const sleeveLengthList = useMemo(() => {
-    return loading ? (
-      <Skeleton count={4} height={20} />
-    ) : (
-      sleeveLengths.map((item) => (
-        <li key={item.sleeveLengthId}>
-          <label className="d-flex align-items-center gap-1 ">
-            <span className="d-flex justify-content-between w-100">
-              {item.name}
-            </span>
-            <input
-              type="checkbox"
-              checked={checkedFilters.sleeveLengths.includes(
-                item.sleeveLengthId
-              )}
-              onChange={() =>
-                updateCheckedFilters("sleeveLengths", item.sleeveLengthId)
-              }
-            />
-          </label>
-        </li>
-      ))
-    );
-  }, [
-    sleeveLengths,
-    checkedFilters.sleeveLengths,
-    updateCheckedFilters,
-    loading,
-  ]);
-
-  const styleList = useMemo(() => {
-    return loading ? (
-      <Skeleton count={4} height={20} />
-    ) : (
-      styles.map((item) => (
-        <li key={item.styleId}>
-          <label className="d-flex align-items-center gap-1 ">
-            <span className="d-flex justify-content-between w-100">
-              {item.name}
-            </span>
-            <input
-              type="checkbox"
-              checked={checkedFilters.styles.includes(item.styleId)}
-              onChange={() => updateCheckedFilters("styles", item.styleId)}
-            />
-          </label>
-        </li>
-      ))
-    );
-  }, [styles, checkedFilters.styles, updateCheckedFilters, loading]);
+  const renderList = (items, type) => {
+    return items.map((item) => (
+      <li key={item[type + "Id"]}>
+        <label className="d-flex align-items-center gap-1 ">
+          <span className="d-flex justify-content-between w-100">
+            {item.name || item.colourName}
+          </span>
+          <input
+            type="checkbox"
+            checked={checkedFilters[type].includes(item[type + "Id"])}
+            onChange={() => updateCheckedFilters(type, item[type + "Id"])}
+          />
+        </label>
+      </li>
+    ));
+  };
 
   return (
-    <div className="tp-shop-sidebar mr-10">
+    <div className="tp-shop-sidebar mr-10 filter-shadow">
       <div className="tp-shop-widget">
         <h3 className="tp-shop-widget-title">Body Type</h3>
-        <ul className="filter-items">{bodyList}</ul>
+        <ul className="filter-items">{loading ? renderSkeleton() : renderList(bodyFits, "bodyFits")}</ul>
       </div>
       <div className="tp-shop-widget">
         <h3 className="tp-shop-widget-title">Colors</h3>
-        <ul className="filter-items">{colourList}</ul>
+        <ul className="filter-items">{loading ? renderSkeleton() : renderList(colours, "colours")}</ul>
       </div>
       <div className="tp-shop-widget">
         <h3 className="tp-shop-widget-title">Dress Types</h3>
-        <ul className="filter-items">{dressTypeList}</ul>
+        <ul className="filter-items">{loading ? renderSkeleton() : renderList(dressTypes, "dressTypes")}</ul>
       </div>
       <div className="tp-shop-widget">
         <h3 className="tp-shop-widget-title">Lengths</h3>
-        <ul className="filter-items">{lengthList}</ul>
+        <ul className="filter-items">{loading ? renderSkeleton() : renderList(lengths, "lengths")}</ul>
       </div>
       <div className="tp-shop-widget">
         <h3 className="tp-shop-widget-title">Neck Lines</h3>
-        <ul className="filter-items">{neckLineList}</ul>
+        <ul className="filter-items">{loading ? renderSkeleton() : renderList(neckLines, "neckLines")}</ul>
       </div>
       <div className="tp-shop-widget">
         <h3 className="tp-shop-widget-title">Seasons</h3>
-        <ul className="filter-items">{seasonList}</ul>
+        <ul className="filter-items">{loading ? renderSkeleton() : renderList(seasons, "seasons")}</ul>
       </div>
       <div className="tp-shop-widget">
         <h3 className="tp-shop-widget-title">Sleeve Lengths</h3>
-        <ul className="filter-items">{sleeveLengthList}</ul>
+        <ul className="filter-items">{loading ? renderSkeleton() : renderList(sleeveLengths, "sleeveLengths")}</ul>
       </div>
       <div className="tp-shop-widget">
         <h3 className="tp-shop-widget-title">Styles</h3>
-        <ul className="filter-items">{styleList}</ul>
+        <ul className="filter-items">{loading ? renderSkeleton() : renderList(styles, "styles")}</ul>
       </div>
     </div>
   );

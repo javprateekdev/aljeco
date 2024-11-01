@@ -1,16 +1,16 @@
 "use client";
 import React, { useState } from "react";
-import { RiMenu3Line } from "react-icons/ri";
+import { RiMenu3Line,RiLogoutCircleRLine } from "react-icons/ri";
 import Offcanvas from "react-bootstrap/Offcanvas";
 import Link from "next/link";
 import Nav from "react-bootstrap/Nav";
-
+import { useAuth } from "@/context/AuthContext";
 const MobileMenus = () => {
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  const { logout } = useAuth();
   const handleLinkClick = () => {
     handleClose();
   };
@@ -136,25 +136,24 @@ const MobileMenus = () => {
             </div>
 
             <div className="mobileaccount ps-4">
-              <div className="d-flex justify-content-between">
-                <div>
-                  <h6 className="m-0">Sunil Yadav</h6>
-                  <p className="m-0" style={{ fontSize: "10px" }}>
-                    sunil.yadav.prof@gmail.com
-                  </p>
-                </div>
-                <Link className="text-primary" href={`/`}>
+              <div className="d-flex justify-content-between align-items-center">
+                <Link
+                  href={`/`}
+                  onClick={() => logout()} // Assuming you want to trigger the logout function
+                  className="btn btn-outline-primary d-flex align-items-center gap-2"
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "1rem",
+                    padding: "0.5rem 1rem",
+                    borderRadius: "8px",
+                    color: "#0d6efd",
+                    borderColor: "#0d6efd",
+                  }}
+                >
+                  <RiLogoutCircleRLine size={20} />
                   Logout
                 </Link>
               </div>
-              <Link
-                onClick={handleLinkClick}
-                className="py-2 d-block"
-                href={`/profile`}
-              >
-                Account
-              </Link>
-              {/* <Link href={`/men`} onClick={handleLinkClick} className='btn btn-primary w-100 mt-10'>Find Store</Link> */}
             </div>
           </div>
         </Offcanvas.Body>

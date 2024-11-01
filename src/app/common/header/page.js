@@ -9,7 +9,7 @@ import {
   FaSearch,
   FaUser,
 } from "react-icons/fa";
-import { BsHandbag, BsHandbagFill, BsSearch } from "react-icons/bs";
+import { BsHandbag, BsHandbagFill } from "react-icons/bs";
 import { RiMenu3Line } from "react-icons/ri";
 import { MdHome, MdLogin, MdOutlineHome } from "react-icons/md";
 import { useRouter } from "next/navigation"; // Import useRouter
@@ -27,56 +27,45 @@ import Link from "next/link";
 import { apiUrl, getToken } from "@/app/api";
 import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
+
 export default function Header() {
   const { cartItems, fetchCart } = useContext(CartContext);
-  const [activeMenu, setActiveMenu] = useState("");
   const { wishListItems, fetchWishlist } = useContext(WishListContext);
   const router = useRouter(); // Use router for navigation
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
+  const [cartBounce, setCartBounce] = useState(false);
+  const [wishlistBounce, setWishlistBounce] = useState(false);
+  const token = getToken();
+
   useEffect(() => {
-    const token = getToken();
     if (token) {
       setLoggedIn(true);
       fetchCart();
       fetchWishlist();
+      userMe();
     }
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
-    const currentPath = router.pathname;
-    if (currentPath === "/") setActiveMenu("home");
-    else if (currentPath === "/wishlist") setActiveMenu("wishlist");
-    else if (currentPath === "/profile") setActiveMenu("profile");
-    else if (currentPath === "/cart") setActiveMenu("cart");
-  }, [router.pathname]);
-  const handleMenuClick = (menu, path) => {
-    setActiveMenu(menu);
-    router.push(path);
-  };
-
-  const token = getToken();
-  const userMe = async () => {
-    try {
-      const req = await axios.get(`${apiUrl}/users/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      console.log("req", req);
-    } catch (error) {
-      console.log("error", error);
+    if (cartItems.length > 0) {
+      setCartBounce(true);
+      setTimeout(() => setCartBounce(false), 500); // Adjust duration to match animation
     }
-  };
+  }, [cartItems.length]);
+
+  useEffect(() => {
+    if (wishListItems.length > 0) {
+      setWishlistBounce(true);
+      setTimeout(() => setWishlistBounce(false), 500); // Adjust duration to match animation
+    }
+  }, [wishListItems.length]);
 
   const handleSearchInputChange = async (event) => {
     const value = event.target.value;
-    console.log("event", event);
     setSearchInput(value);
-
     if (value) {
       try {
         const response = await axios.get(`${apiUrl}/product?search=${value}`);
@@ -89,40 +78,57 @@ export default function Header() {
     }
   };
 
+  const userMe = async () => {
+    try {
+      const req = await axios.get(`${apiUrl}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
   return (
     <>
-      <div id="tp-bottom-menu-sticky" className="tp-mobile-menu d-lg-none">
+      <div
+        id="tp-bottom-menu-sticky"
+        className="tp-mobile-menu d-lg-none"
+        style={{
+          background: "rgba(255, 255, 255, 0.2)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)", // Safari support
+          borderRadius: "10px",
+          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+        }}
+      >
         <div className="container">
           <div className="row">
             <div className="col">
               <div className="tp-mobile-item text-center">
-                <button
-                  onClick={() => handleMenuClick("home", "/")}
-                  className={`tp-mobile-item-btn ${
-                    activeMenu === "home" ? "active" : ""
-                  }`}
-                >
-                  {activeMenu === "home" ? <MdHome /> : <MdOutlineHome />}
-                  <span>Home</span>
-                </button>
+                <Link href="/" prefetch={true}>
+                  <button
+                    className={`tp-mobile-item-btn`}
+                  >
+                    <MdHome />
+                    <span>Home</span>
+                  </button>
+                </Link>
               </div>
             </div>
             <div className="col">
               <div className="tp-mobile-item text-center">
-                <button
-                  onClick={() =>
-                    handleMenuClick(
-                      "wishlist",
-                      loggedIn ? "/wishlist" : "/authentication/login"
-                    )
-                  }
-                  className={`tp-mobile-item-btn ${
-                    activeMenu === "wishlist" ? "active" : ""
-                  }`}
+                <Link
+                  href={loggedIn ? "/wishlist" : "/authentication/login"}
+                  prefetch={true}
                 >
-                  {activeMenu === "wishlist" ? <FaHeart /> : <FaRegHeart />}
-                  <span>Wishlist</span>
-                </button>
+                  <button className={`tp-mobile-item-btn`}>
+                    <FaRegHeart />
+                    <span>Wishlist</span>
+                  </button>
+                </Link>
               </div>
             </div>
             <div className="col">
@@ -130,36 +136,31 @@ export default function Header() {
             </div>
             <div className="col">
               <div className="tp-mobile-item text-center">
-                <button
-                  onClick={() => handleMenuClick("profile", "/profile")}
-                  className={`tp-mobile-item-btn ${
-                    activeMenu === "profile" ? "active" : ""
-                  }`}
+                <Link
+                  href={loggedIn ? "/profile" : "/authentication/login"}
+                  prefetch={true}
                 >
-                  {activeMenu === "profile" ? <FaUser /> : <FaRegUser />}
-                  <span>Account</span>
-                </button>
+                  <button className={`tp-mobile-item-btn`}>
+                    <FaUser />
+                    <span>Account</span>
+                  </button>
+                </Link>
               </div>
             </div>
             <div className="col">
               <div className="tp-mobile-item text-center">
-                <button
-                  onClick={() =>
-                    handleMenuClick(
-                      "cart",
-                      loggedIn ? "/cart" : "/authentication/login"
-                    )
-                  }
-                  className={`tp-mobile-item-btn ${
-                    activeMenu === "cart" ? "active" : ""
-                  }`}
+                <Link
+                  href={loggedIn ? "/cart" : "/authentication/login"}
+                  prefetch={true}
                 >
-                  {activeMenu === "cart" ? <BsHandbagFill /> : <BsHandbag />}
-                  <span className="tp-header-action-badge mobilecart">
-                    {cartItems.length ? cartItems.length : 0}
-                  </span>
-                  <span>Cart</span>
-                </button>
+                  <button className={`tp-mobile-item-btn`}>
+                    <BsHandbag />
+                    <span className={`tp-header-action-badge mobilecart ${cartBounce ? "bounce" : ""}`}>
+                      {isLoggedIn ? cartItems.length : 0}
+                    </span>
+                    <span>Cart</span>
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -220,37 +221,10 @@ export default function Header() {
                               onChange={handleSearchInputChange}
                               className="search-input"
                             />
-                            <button className="d-none d-sm-block" type="submit">
-                              <FiSearch />
+                            <button type="submit" className="search-button">
+                              <FaSearch />
                             </button>
                           </div>
-                          {filteredProducts.length > 0 && (
-                            <div className="search-suggestions">
-                              <ul>
-                                {filteredProducts.map((product) => (
-                                  <li key={product.id}>
-                                    <Link
-                                      href={`/men/${product.productId}`}
-                                      prefetch={true}
-                                      onClick={() => setSearchEmpty("")}
-                                    >
-                                      <p className="text-black">
-                                        {product.productName}
-                                      </p>
-                                      <img
-                                        src={
-                                          product.productItems[0].images.url ||
-                                          ""
-                                        }
-                                        className="suggestion-image"
-                                        alt={product.productName} // Provide alt text for accessibility
-                                      />
-                                    </Link>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
                         </form>
                       </div>
 
@@ -260,55 +234,47 @@ export default function Header() {
                             href={
                               isLoggedIn ? "/wishlist" : "/authentication/login"
                             }
-                            prefetch={true}
                           >
                             <button className="tp-header-action-btn">
                               <FaRegHeart />
-                              <span className="tp-header-action-badge">
-                                {wishListItems.length
-                                  ? wishListItems.length
-                                  : 0}
+                              <span
+                                className={`tp-header-action-badge ${wishlistBounce ? "bounce" : ""}`}
+                              >
+                                {wishListItems.length}
                               </span>
                             </button>
                           </Link>
-                        </div>
-                        <div className="tp-header-action-item d-block d-xl-none">
-                          <MobileMenus />
                         </div>
                         <div className="tp-header-action-item d-none d-xl-block">
                           <Link
-                            href={isLoggedIn ? "/cart" : "/authentication/login"}
-                            prefetch={true}
+                            href={
+                              isLoggedIn ? "/cart" : "/authentication/login"
+                            }
                           >
                             <button className="tp-header-action-btn cartmini-open-btn">
                               <BsHandbag />
-                              <span className="tp-header-action-badge">
-                                {cartItems.length ? cartItems.length : 0}
+                              <span
+                                className={`tp-header-action-badge ${cartBounce ? "bounce" : ""}`}
+                              >
+                                {cartItems.length}
                               </span>
                             </button>
                           </Link>
                         </div>
-                        {!isLoggedIn ? (
-                          <div className="tp-header-action-item">
-                            <Link href="/authentication/login" prefetch={true}>
-                              <button className="d-flex align-items-center btn btn-primary">
-                                <MdLogin style={{ fontSize: "18px" }} />{" "}
-                                <span className="ps-1 d-none d-md-block">
-                                  Login
-                                </span>
-                              </button>
-                            </Link>
-                          </div>
-                        ) : (
-                          <div className="tp-header-action-item d-none d-md-block">
-                            <Link href="/profile" prefetch={true}>
-                              <button className="d-flex align-items-center btn btn-primary">
-                                <BiUser style={{ fontSize: "18px" }} />{" "}
-                                <span className="ps-1">Profile</span>
-                              </button>
-                            </Link>
-                          </div>
-                        )}
+                        <div className="tp-header-action-item d-none d-lg-block">
+                          <Link
+                            href={isLoggedIn ? "/profile" : "/authentication/login"}
+                          >
+                            <button className="tp-header-action-btn">
+                              <FaUser />
+                            </button>
+                          </Link>
+                        </div>
+                        <div className="tp-header-action-item d-lg-none">
+                          <button className="tp-header-action-btn">
+                            <RiMenu3Line />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>

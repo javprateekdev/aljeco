@@ -6,15 +6,19 @@ import "../../../spacing.css";
 import Link from "next/link";
 import { MdLogin } from "react-icons/md";
 import axios from "axios";
-import { apiUrl } from "@/app/api";
+import { apiUrl, getToken } from "@/app/api";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Cookies from "js-cookie";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+
 const SignUp = () => {
   const router = useRouter();
   const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -74,6 +78,14 @@ const SignUp = () => {
       isValid = false;
     }
 
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirm Password is required";
+      isValid = false;
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+      isValid = false;
+    }
+
     setErrors(newErrors);
     return isValid;
   };
@@ -90,6 +102,7 @@ const SignUp = () => {
       };
 
       try {
+        setLoading(true);
         const response = await axios.post(
           `${apiUrl}/auth/register`,
           submissionData
@@ -105,7 +118,6 @@ const SignUp = () => {
           theme: "light",
           transition: Bounce,
         });
-        localStorage.setItem("token", response.data.accessToken);
         Cookies.set("is_user_token", response.data.accessToken);
         setIsLoggedIn(true);
         router.push("/");
@@ -143,7 +155,7 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getToken();
     if (token) {
       router.push("/");
     }
@@ -269,20 +281,20 @@ const SignUp = () => {
                       )}
                     </div>
 
-                    <div className="tp-login-input-box">
-                      <div className="tp-login-input">
-                        <input
-                          id="phone"
-                          name="phone"
-                          type="tel"
-                          placeholder="Phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div className="tp-login-input-title">
-                        <label htmlFor="phone">Phone</label>
-                      </div>
+                    <div className="tp-login-input-box d-flex">
+                      <span className="input-group-text">+91</span>
+                      <input
+                        id="phone"
+                        name="phone"
+                        type="text"
+                        placeholder="Phone"
+                        value={formData.phone}
+                        onChange={(e) =>
+                          setFormData({ ...formData, phone: e.target.value })
+                        }
+                        maxLength="10"
+                        className="tp-login-input"
+                      />
                       {errors.phone && (
                         <div className="text-danger">{errors.phone}</div>
                       )}
@@ -307,23 +319,34 @@ const SignUp = () => {
                       )}
                     </div>
                   </div>
-                  <div className="tp-login-suggetions d-sm-flex align-items-center justify-content-between mb-20">
-                    <div className="d-flex align-items-center gap-1">
+                  <div className="tp-login-input-box">
+                    <div className="tp-login-input">
                       <input
-                        type="checkbox"
-                        id="rememberMe"
-                        className="custom-checkbox1"
+                        id="tp_confirm_password"
+                        name="confirmPassword"
+                        type="password"
+                        placeholder="Confirm Password"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
                       />
-                      <label
-                        className="d-flex align-items-center"
-                        htmlFor="rememberMe"
-                      >
-                        Remember me
+                    </div>
+                    <div className="tp-login-input-title">
+                      <label htmlFor="tp_confirm_password">
+                        Confirm Password
                       </label>
                     </div>
+                    {errors.confirmPassword && (
+                      <div className="text-danger">
+                        {errors.confirmPassword}
+                      </div>
+                    )}
                   </div>
                   <div className="tp-login-bottom">
-                    <button type="submit" className="tp-login-btn w-100">
+                    <button
+                      type="submit"
+                      className="tp-login-btn w-100"
+                      disabled={loading}
+                    >
                       <MdLogin style={{ fontSize: "18px" }} /> Signup
                     </button>
                   </div>

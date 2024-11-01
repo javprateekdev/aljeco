@@ -8,6 +8,7 @@ import Skeleton from "react-loading-skeleton"; // Import Skeleton from the libra
 import "react-loading-skeleton/dist/skeleton.css"; // Default styles for skeleton
 
 export default function Page() {
+
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -32,16 +33,9 @@ export default function Page() {
           <div className="row">
             <div className="col-xxl-12">
               <div className="breadcrumb__content p-relative z-index-1">
-                <h3 className="breadcrumb__title">
-                  {loading ? (
-                    <Skeleton width={200} height={24} /> // Show skeleton when loading
-                  ) : (
-                    `Mens ${count} Designs` // Show data after loading
-                  )}
-                </h3>
                 <div className="breadcrumb__list">
                   <span>
-                    <Link href="/">Home</Link>
+                    <Link href="/" prefetch={true} >Home</Link>
                   </span>
                   <span>Mens</span>
                 </div>

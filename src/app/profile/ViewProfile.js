@@ -8,15 +8,15 @@ import { useAuth } from "@/context/AuthContext";
 import { WishListContext } from "@/context/WishListContext";
 import axios from "axios";
 import Image from "next/image";
-import { apiUrl } from "../api";
+import { apiUrl, getToken } from "../api";
 const ViewProfile = () => {
-  
   const router = useRouter();
-  const { token, logout } = useAuth();
+  const { isLoggedIn, logout } = useAuth();
   const { wishListItems } = useContext(WishListContext);
   const [user, setUser] = useState(null);
   const [addressCount, setAddressCount] = useState(0);
   const [ordersCount, setOrdersCount] = useState(0);
+  const token = getToken();
 
   const getUser = async (u) => {
     if (!token) return null;
@@ -32,20 +32,10 @@ const ViewProfile = () => {
 
   useEffect(() => {
     getUser();
-  }, [token]);
+  }, [isLoggedIn]);
+
   const handleLogout = () => {
     logout();
-    toast.success("Logout Successfully!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      transition: Bounce,
-    });
     router.push("/authentication/login");
   };
 
