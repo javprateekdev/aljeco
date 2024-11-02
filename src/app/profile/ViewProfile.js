@@ -9,6 +9,8 @@ import { WishListContext } from "@/context/WishListContext";
 import axios from "axios";
 import Image from "next/image";
 import { apiUrl, getToken } from "../api";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 const ViewProfile = () => {
   const router = useRouter();
   const { isLoggedIn, logout } = useAuth();
@@ -16,18 +18,61 @@ const ViewProfile = () => {
   const [user, setUser] = useState(null);
   const [addressCount, setAddressCount] = useState(0);
   const [ordersCount, setOrdersCount] = useState(0);
+  const [loading, setLoading] = useState(true); 
   const token = getToken();
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      // Assuming you have an endpoint to upload images
+      const uploadResponse = await axios.post(`${apiUrl}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const imageUrl = uploadResponse.data.meta.filename; // Adjust this according to your response structure
+      await updateProfileImage(imageUrl);
+    } catch (error) {
+      toast.error("Image upload failed!");
+    }
+  };
+
+  const updateProfileImage = async (imageUrl) => {
+    try {
+      await axios.post(
+        `${apiUrl}/users/me/profile-image`,
+        { profileImage: imageUrl },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success("Profile image updated successfully!");
+      getUser(); // Refresh user data to reflect the new image
+    } catch (error) {
+      toast.error("Failed to update profile image!");
+    }
+  };
 
   const getUser = async (u) => {
     if (!token) return null;
+    setLoading(true); 
     const response = await axios.get(`${apiUrl}/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
-    setUser(response.data);
-    setAddressCount(response.data.Address.length || 0);
-    setOrdersCount(response.data.Order.length || 0);
+    setUser(response?.data);
+    setAddressCount(response?.data?.Address?.length || 0);
+    setOrdersCount(response?.data?.Order?.length || 0);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -48,19 +93,23 @@ const ViewProfile = () => {
               <div className="col-md-9">
                 <div className="profile__main-inner d-flex flex-wrap align-items-center">
                   <div className="profile__main-thumb">
+                 { loading ? (
+                      <Skeleton circle={true} height={100} width={100} />
+                    ) : (
                     <img
                       src={
                         user?.profileImage ||
                         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRLMI5YxZE03Vnj-s-sth2_JxlPd30Zy7yEGg&s"
                       }
                       alt={user?.name || "Default profile"}
-                    />
+                    />)}
                     <div className="profile__main-thumb-edit">
-                      <input
-                        id="profile-thumb-input"
-                        className="profile-img-popup"
-                        type="file"
-                      />
+                    <input
+                      id="profile-thumb-input"
+                      className="profile-img-popup"
+                      type="file"
+                      onChange={handleImageUpload}
+                    />
                       <label for="profile-thumb-input">
                         <BiCamera />
                       </label>
@@ -68,14 +117,18 @@ const ViewProfile = () => {
                   </div>
                   <div className="profile__main-content">
                     <h4 className="profile__main-title">
-                      Welcome {user && user.firstname} {user && user.lastname}
+                    {loading ? (
+                        <Skeleton />
+                      ) : (
+                        `Welcome ${user?.firstname || ""} ${user?.lastname || ""}`
+                      )}
                     </h4>
                     <p>
-                      <BiEnvelope /> {(user && user.email) || ""}
+                      <BiEnvelope /> {loading ? <Skeleton width={150} /> : (user?.email || "")}
                     </p>
                     <p>
                       <BiPhone />
-                      +91- {(user && user.mobile) || ""}
+                      {loading ? <Skeleton width={100} /> : `+91- ${user?.mobile || ""}`}
                     </p>
                   </div>
                 </div>

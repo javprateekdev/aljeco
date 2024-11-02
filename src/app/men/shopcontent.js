@@ -23,7 +23,7 @@ const ShopContent = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { checkedFilters } = useFilter(); // Accessing the filters from context
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [itemsPerPage] = useState(10);
   const [count, setCount] = useState(10);
   const totalPages = Math.ceil(count / itemsPerPage);

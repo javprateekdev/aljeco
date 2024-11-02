@@ -12,47 +12,14 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 const Cart = () => {
-  const { cartItems: initialCartItems, fetchCart } = useContext(CartContext);
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const { cartItems, addToCart, updateCartItemQuantity, deleteCartItem } = useContext(CartContext);
   const [loading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [message, setMessage] = useState("");
   const [discountDetails, setDiscountDetails] = useState(null);
   const router = useRouter();
   const token = getToken();
-  const handleCouponCodeChange = (event) => {
-    setCouponCode(event.target.value);
-  };
 
-  useEffect(() => {
-    setCartItems(initialCartItems);
-  }, [initialCartItems]);
-
-  const updateCartItemQuantity = async (id, newQuantity) => {
-    const updatedCartItems = cartItems.map((item) =>
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    );
-    setCartItems(updatedCartItems);
-    try {
-      setLoading(true);
-      await axios.put(
-        `${apiUrl}/cart/items/${id}/quantity`,
-        { quantity: newQuantity },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      fetchCart();
-    } catch (error) {
-      console.error("Error updating cart item quantity:", error);
-      setCartItems(initialCartItems);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const increaseQuantity = (item) => {
     const newQuantity = item.quantity + 1;
@@ -66,23 +33,6 @@ const Cart = () => {
     }
   };
 
-  const deleteCartItem = async (id) => {
-    try {
-      setLoading(true);
-      await axios.delete(`${apiUrl}/cart/items/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      fetchCart();
-      setLoading(false);
-    } catch (error) {
-      console.error("Error deleting cart item:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const calculateTotalPrice = () => {
     const subtotal =

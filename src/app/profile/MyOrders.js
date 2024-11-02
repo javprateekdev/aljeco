@@ -5,7 +5,6 @@ import { apiUrl, getToken } from "../api";
 import moment from "moment";
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
-  console.log("orders", orders);
   const getOrders = async () => {
     try {
       const token = getToken();

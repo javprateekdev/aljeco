@@ -7,48 +7,22 @@ import { useRouter } from "next/navigation";
 import { toast, Bounce } from "react-toastify";
 import axios from "axios";
 import "react-toastify/dist/ReactToastify.css";
+import Link from "next/link";
 import Loader from "../utils/loader";
 import { apiUrl } from "../api";
 import { getToken } from "../api";
 const Wishlist = () => {
-  const { wishListItems, fetchWishlist } = useContext(WishListContext);
+  const { wishListItems, fetchWishlist, deleteWishListItem } = useContext(WishListContext);
   const { addToCart } = useContext(CartContext); // Add addToCart for adding items to cart
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [quantities, setQuantities] = useState({}); // Track item quantities
 
-  const [token, setToken] = useState("");
 
-  const deleteWishListItem = async (id) => {
-    try {
-      setLoading(true);
-      const response = await axios.delete(`${apiUrl}/wishlist/items/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-      toast.success("Deleted Successfully!", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
-      await fetchWishlist(); // Fetch the updated wishlist
-      setLoading(false);
-    } catch (error) {
-      console.error("Error deleting wishlist item:", error);
-      setLoading(false);
-    }
-  };
-
+ const token = getToken()
   // Function to handle adding items to cart
   const handleAddToCart = (item) => {
+    deleteWishListItem(item.wishlistId)
     if (!token) {
       router.push("/authentication/login");
     } else {
@@ -58,15 +32,6 @@ const Wishlist = () => {
         priceAtTime: item.productItem.salePrice,
       };
       addToCart(cartItem); // Add to cart using context
-      toast.success("Added to Cart!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "light",
-      });
     }
   };
 
@@ -88,8 +53,10 @@ const Wishlist = () => {
 
   useEffect(() => {
     const token = getToken();
-    setToken(token);
-    fetchWishlist();
+if(token){
+  fetchWishlist();
+}
+   
   }, []);
 
   if (loading) return <Loader />;
@@ -104,7 +71,7 @@ const Wishlist = () => {
                 <h3 className="breadcrumb__title">Wishlist</h3>
                 <div className="breadcrumb__list">
                   <span>
-                    <button onClick={() => router.push("/")}>Home</button>{" "}
+                  <Link href="/cart" prefetch={true} >Home</Link>{" "}
                     {/* Use router.push */}
                   </span>
                   <span>Wishlist</span>
@@ -200,7 +167,7 @@ const Wishlist = () => {
                         <td className="tp-cart-action">
                           <button
                             className="tp-cart-action-btn"
-                            onClick={() => deleteWishListItem(item.wishlistId)}
+                            onClick={() => deleteWishListItem(item.id)}
                           >
                             <span>Remove</span>
                           </button>
@@ -214,12 +181,11 @@ const Wishlist = () => {
                 <div className="row align-items-end">
                   <div className="col-xl-6 col-md-8">
                     <div className="tp-cart-update">
-                      <button
-                        onClick={() => router.push("/cart")} // Use router.push instead of href
+                    <Link href="/cart" prefetch={true} // Use router.push instead of href
                         className="tp-cart-update-btn"
                       >
                         Go To Cart
-                      </button>
+                        </Link>
                     </div>
                   </div>
                 </div>

@@ -8,24 +8,6 @@ import Skeleton from "react-loading-skeleton"; // Import Skeleton from the libra
 import "react-loading-skeleton/dist/skeleton.css"; // Default styles for skeleton
 
 export default function Page() {
-
-  const [count, setCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    axios
-      .get(`${apiUrl}/product`)
-      .then((response) => {
-        console.log(response);
-        setCount(response.data.count);
-        setLoading(false); // Stop loading after fetching data
-      })
-      .catch((error) => {
-        console.error("Error fetching the products:", error);
-        setLoading(false);
-      });
-  }, []);
-
   return (
     <>
       <section className="breadcrumb__area include-bg inbreadcrumb bg-light">
@@ -45,11 +27,9 @@ export default function Page() {
         </div>
       </section>
 
-      {loading ? (
-        <Skeleton height={500} count={1} /> // Show a full skeleton for the content while loading
-      ) : (
+
         <ShopContent />
-      )}
+    
     </>
   );
 }

@@ -28,7 +28,7 @@ const Page = () => {
                 website!
               </p>
               <a
-                href="https://www.google.com/maps/dir/?api=1&destination=37.7749,-122.4194" // Replace with your actual wedding location coordinates
+                href="https://www.google.com/maps/dir/?api=1&destination=27.0963267,78.07547" 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-primary"
@@ -63,7 +63,7 @@ const Page = () => {
                 Check out our latest updates and services on our new website.
               </p>
               <a
-                href="https://your-new-website.com"
+                href="https://aljeco.in"
                 className="btn btn-primary"
               >
                 Visit New Website

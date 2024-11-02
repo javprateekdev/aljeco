@@ -1,6 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { apiUrl } from "@/app/api";
+import React, { useState, useEffect,useContext } from "react";
+import { apiUrl, getToken } from "@/app/api";
 import { BsHeart, BsShare } from "react-icons/bs";
 import RelatedProducts from "./RelatedProducts";
 import ProductDetailImages from "./ProductDetailImages";
@@ -12,71 +12,47 @@ import Reviews from "../reviews";
 import Loader from "@/app/utils/loader";
 import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CartContext } from "@/context/CartContext";
+import { WishListContext } from "@/context/WishListContext";
+
 import ProductDetailsSkeleton from "./productDetailSkeleton";
 
 const ProductDetails = ({ params }) => {
+  
+  const token  = getToken()
   const { id } = params; // Getting the product id from the route parameters
   const [product, setProduct] = useState({});
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const [token, setToken] = useState("");
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setToken(token);
-  }, []);
-
+  const { addToCart } = useContext(CartContext);
+  const { addToWishList } = useContext(WishListContext);
   // Function to add product to cart
-  const addToCart = async () => {
-    // Get the user's token from local storage
+  const handleAddToCart = () => {
     if (!token) {
-      router.push("/authentication/login"); // Redirect to login page if not authenticated
-      return;
-    }
-
-    // Ensure product data is loaded before proceeding
-    if (!product?.productItems || !product?.productItems[0]) {
-      return;
-    }
-
-    // Prepare the data to be sent to the API
-    const data = {
-      productItemId: product.productItems[0].itemId, // Use the first product item for demo
-      quantity: 1, // Set default quantity to 1
-      priceAtTime:
-        product.productItems[0].salePrice ||
-        product.productItems[0].originalPrice, // Get the current price
-    };
-
-    try {
-      const response = await axios.post(`${apiUrl}/cart`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      // Handle success
-      if (response.status === 201) {
-        toast.success("Item Added To the Cart!", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error("Error adding item to cart:", error);
-      alert("Failed to add item to cart.");
+      router.push("/authentication/login");
+    } else {
+      const item = {
+        productItemId: product.productItems[0].itemId,
+        quantity: 1,
+        priceAtTime: product.productItems[0].salePrice,
+      };
+      addToCart(item);
     }
   };
-
+  
+  const handleAddToWishList = () => {
+    if (!token) {
+      router.push("/authentication/login");
+    } else {
+      const item = {
+        productItemId: product.productItems[0].itemId,
+        quantity: 1,
+        priceAtTime: product.productItems[0].salePrice,
+      };
+      addToWishList(item);
+    }
+  };
   // Fetch product details when the component loads
   useEffect(() => {
     axios
@@ -138,13 +114,13 @@ const ProductDetails = ({ params }) => {
                       <div className="tp-product-details-add-to-cart">
                         <button
                           className="btn btn-primary w-100"
-                          onClick={addToCart} // Attach the addToCart function
+                          onClick={handleAddToCart} // Attach the addToCart function
                         >
                           Add To Cart
                         </button>
                       </div>
                     </div>
-                    <button type="button" className="btn btn-outline-primary">
+                    <button type="button" className="btn btn-outline-primary"  onClick={handleAddToWishList}>
                       <BsHeart />
                     </button>
                     <button type="button" className="btn btn-outline-primary">

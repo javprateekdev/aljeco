@@ -14,6 +14,7 @@ import { useAuth } from "@/context/AuthContext";
 import Cookies from "js-cookie";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { ThreeDots } from 'react-loader-spinner';
 
 const SignUp = () => {
   const router = useRouter();
@@ -38,6 +39,7 @@ const SignUp = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: "" });
+    
   };
 
   const validateForm = () => {
@@ -64,6 +66,9 @@ const SignUp = () => {
 
     if (!formData.phone) {
       newErrors.phone = "Phone number is required";
+      isValid = false;
+    } else if (!/^\d+$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must contain only digits";
       isValid = false;
     } else if (formData.phone.length !== 10) {
       newErrors.phone = "Phone number must be 10 digits";
@@ -107,6 +112,7 @@ const SignUp = () => {
           `${apiUrl}/auth/register`,
           submissionData
         );
+        setLoading(false);
         toast.success("User registered successfully!", {
           position: "top-right",
           autoClose: 5000,
@@ -150,6 +156,8 @@ const SignUp = () => {
           theme: "light",
           transition: Bounce,
         });
+      }finally{
+        setLoading(false);
       }
     }
   };
@@ -286,12 +294,13 @@ const SignUp = () => {
                       <input
                         id="phone"
                         name="phone"
-                        type="text"
+                        type="tel"
                         placeholder="Phone"
                         value={formData.phone}
-                        onChange={(e) =>
-                          setFormData({ ...formData, phone: e.target.value })
-                        }
+                        onChange={(e) =>{
+                          setFormData({ ...formData, phone: e.target.value });
+                          setErrors((prevErrors) => ({ ...prevErrors, phone: "" }));
+                        }}
                         maxLength="10"
                         className="tp-login-input"
                       />
@@ -318,8 +327,7 @@ const SignUp = () => {
                         <div className="text-danger">{errors.password}</div>
                       )}
                     </div>
-                  </div>
-                  <div className="tp-login-input-box">
+                    <div className="tp-login-input-box">
                     <div className="tp-login-input">
                       <input
                         id="tp_confirm_password"
@@ -341,14 +349,31 @@ const SignUp = () => {
                       </div>
                     )}
                   </div>
+                  </div>
+                
                   <div className="tp-login-bottom">
-                    <button
-                      type="submit"
-                      className="tp-login-btn w-100"
-                      disabled={loading}
-                    >
-                      <MdLogin style={{ fontSize: "18px" }} /> Signup
-                    </button>
+                  <button
+  type="submit"
+  className="tp-login-btn w-100 d-flex justify-content-center align-items-center"
+  disabled={loading}
+>
+  {loading ? (
+    <ThreeDots
+      visible={true}
+      height="20"
+      width="20"
+      color="#ffffff"
+      radius="9"
+      ariaLabel="three-dots-loading"
+      wrapperStyle={{}}
+      wrapperClass=""
+    />
+  ) : (
+    <>
+      <MdLogin style={{ fontSize: "18px" }} /> Signup
+    </>
+  )}
+</button>
                   </div>
                 </div>
               </form>

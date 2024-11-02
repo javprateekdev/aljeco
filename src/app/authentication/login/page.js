@@ -15,6 +15,7 @@ import Loader from "../../utils/loader";
 import { useDispatch } from "react-redux";
 import { useAuth } from "@/context/AuthContext";
 import Cookies from "js-cookie";
+import { ThreeDots } from 'react-loader-spinner';
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -188,9 +189,29 @@ const Login = () => {
                       </div>
                     </div>
                     <div className="tp-login-bottom">
-                      <button type="submit" className="tp-login-btn w-100">
-                        <MdLogin style={{ fontSize: "18px" }} /> Login
-                      </button>
+                    <button
+  type="submit"
+  className="tp-login-btn w-100 d-flex justify-content-center align-items-center"
+  disabled={loading}
+>
+  {loading ? (
+    <ThreeDots
+      visible={true}
+      height="20"
+      width="20"
+      color="#ffffff"
+      radius="9"
+      ariaLabel="three-dots-loading"
+      wrapperStyle={{}}
+      wrapperClass=""
+    />
+  ) : (
+    <>
+      <MdLogin style={{ fontSize: "18px" }} /> Login
+    </>
+  )}
+</button>
+
                     </div>
                     {error && <p className="text-danger">{error}</p>}{" "}
                     {/* General error */}

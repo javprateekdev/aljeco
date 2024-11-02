@@ -86,6 +86,7 @@ export default function Header() {
           "Content-Type": "application/json",
         },
       });
+      console.log('req',req)
     } catch (error) {
       console.log("error", error);
     }
