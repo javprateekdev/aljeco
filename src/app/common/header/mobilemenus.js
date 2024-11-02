@@ -9,8 +9,8 @@ const MobileMenus = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const { logout } = useAuth();
+  
+  const { logout ,isLoggedIn} = useAuth();
   const handleLinkClick = () => {
     handleClose();
   };
@@ -135,7 +135,7 @@ const MobileMenus = () => {
               </div>
             </div>
 
-            <div className="mobileaccount ps-4">
+           {isLoggedIn? <div className="mobileaccount ps-4">
               <div className="d-flex justify-content-between align-items-center">
                 <Link
                   href={`/`}
@@ -154,7 +154,7 @@ const MobileMenus = () => {
                   Logout
                 </Link>
               </div>
-            </div>
+            </div>:<></>} 
           </div>
         </Offcanvas.Body>
       </Offcanvas>

@@ -130,6 +130,27 @@ const CheckoutPage = () => {
     setAddresses(response.data[0].Address);
     setAddressLoading(false)
   };
+  const validateAddress = (address) => {
+    const errors = {};
+    
+    if (!address.addressLine1) {
+      errors.addressLine1 = "Address Line 1 is required.";
+    }
+    if (!address.city) {
+      errors.city = "City is required.";
+    }
+    if (!address.state) {
+      errors.state = "State is required.";
+    }
+    if (!address.postalCode) {
+      errors.postalCode = "Postal Code is required.";
+    }
+    if (!address.country) {
+      errors.country = "Country is required.";
+    }
+  
+    return errors;
+  };
 
   const handleAddNewAddress = async () => {
     const errors = validateAddress(newAddress);

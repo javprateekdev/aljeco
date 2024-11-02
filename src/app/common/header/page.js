@@ -271,11 +271,10 @@ export default function Header() {
                             </button>
                           </Link>
                         </div>
-                        <div className="tp-header-action-item d-lg-none">
-                          <button className="tp-header-action-btn">
-                            <RiMenu3Line />
-                          </button>
-                        </div>
+                      
+<div className="tp-header-action-item d-block d-xl-none">
+<MobileMenus />
+</div>
                       </div>
                     </div>
                   </div>

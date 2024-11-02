@@ -12,14 +12,23 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 const Cart = () => {
-  const { cartItems, addToCart, updateCartItemQuantity, deleteCartItem } = useContext(CartContext);
+  const { cartItems, addToCart, updateCartItemQuantity, deleteCartItem,fetchCart } = useContext(CartContext);
   const [loading, setLoading] = useState(false);
   const [couponCode, setCouponCode] = useState("");
   const [message, setMessage] = useState("");
   const [discountDetails, setDiscountDetails] = useState(null);
   const router = useRouter();
   const token = getToken();
-
+   
+  useEffect(()=>{
+    if(!token){
+      router.push('/authentication/login')
+    }
+    if(token){
+      fetchCart()
+    }
+    
+  },[])
 
   const increaseQuantity = (item) => {
     const newQuantity = item.quantity + 1;
@@ -38,7 +47,7 @@ const Cart = () => {
     const subtotal =
       cartItems &&
       cartItems.reduce(
-        (total, item) => total + item.productItem.salePrice * item.quantity,
+        (total, item) => total + item.productItem?.salePrice * item.quantity,
         0
       );
 
@@ -128,11 +137,11 @@ const Cart = () => {
                               </td>
                               <td className="tp-cart-title">
                                 <a href="#">
-                                  {item.productItem.product.productName}
+                                  {item?.productItem?.product?.productName}
                                 </a>
                               </td>
                               <td className="tp-cart-price">
-                                <span>₹{item.productItem.salePrice}</span>
+                                <span>₹{item?.productItem?.salePrice}</span>
                               </td>
                               <td className="tp-cart-quantity">
                                 <div className="tp-product-quantity mt-10 mb-10">
@@ -145,7 +154,7 @@ const Cart = () => {
                                   <input
                                     className="tp-cart-input"
                                     type="text"
-                                    value={item.quantity}
+                                    value={item?.quantity}
                                     readOnly
                                   />
                                   <span
@@ -182,7 +191,7 @@ const Cart = () => {
                       ) : (
                         cartItems.reduce(
                           (total, item) =>
-                            total + item.productItem.salePrice * item.quantity,
+                            total + item.productItem?.salePrice * item.quantity,
                           0
                         )
                       )}
