@@ -121,8 +121,8 @@ const Cart = () => {
                               <td className="tp-cart-img">
                                 <a href="#">
                                   <img
-                                    src={item.productItem.images[0].url}
-                                    alt={item.productItem.product.productName}
+                                    src={item?.productItem?.images[0]?.url}
+                                    alt={item?.productItem?.product?.productName}
                                   />
                                 </a>
                               </td>
