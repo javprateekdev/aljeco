@@ -5,7 +5,10 @@ const Reviews = () => {
   const ratingChanged = (newRating) => {
     console.log(newRating);
   };
-
+  const {isLoggedIn}=useAuth()
+  const revievSubmitHandler =()=>{
+    isLoggedIn? "": "/authentication/login"
+  }
   return (
     <>
       <div className="tp-product-details-bottom pb-40 bg-white">
@@ -249,7 +252,7 @@ const Reviews = () => {
                             </div>
                           </div>
                           <div className="tp-product-details-review-btn-wrapper">
-                            <button className="tp-product-details-review-btn">
+                            <button className="tp-product-details-review-btn" onClick={revievSubmitHandler}>
                               Submit
                             </button>
                           </div>

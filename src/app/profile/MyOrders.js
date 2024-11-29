@@ -20,7 +20,9 @@ const MyOrders = () => {
   useEffect(() => {
     getOrders();
   }, []);
+  const handleOrderStatus=()=>{
 
+  }
   return (
     <>
       <div className="tp-order-inner">
@@ -41,7 +43,7 @@ const MyOrders = () => {
                     <td data-info="title">
                       {moment(item.createdAt).format("lll")}
                     </td>
-                    <td data-info="status pending"> {item.status}</td>
+                    <td data-info="status pending" onClick={handleOrderStatus}> {item.status}</td>
                   </tr>
                 );
               })}

@@ -579,7 +579,7 @@ if (confirmOrder) {
                       className="coupaninput"
                     />
                     <button
-                      className="btn btn-success applycoupan"
+                      className="btn-success applycoupan"
                       type="submit"
                     >
                       Apply Coupon

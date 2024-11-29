@@ -70,7 +70,9 @@ const TrackOrder = () => {
                   </div>
 
                   <a href="#" className="text-success">
-                    Track your order here{" "}
+                    <Link href={"/profile"} prefetch={true}>
+                      Track your order here{" "}
+                    </Link>
                   </a>
                 </div>
                 <div className="tp-order-details-item-wrapper">

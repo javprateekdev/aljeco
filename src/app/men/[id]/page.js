@@ -71,7 +71,7 @@ const ProductDetails = ({ params }) => {
 
   return (
     <>
-      <section className="pt-4 pb-60">
+      <section className="pt-90 pb-60">
         <div className="container-fluid">
           <div className="row justify-content-between">
             <div className="col-md-8">

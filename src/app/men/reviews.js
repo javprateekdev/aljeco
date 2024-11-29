@@ -1,6 +1,11 @@
+import { useAuth } from "@/context/AuthContext";
 import React from "react";
 
 const Reviews = () => {
+  const {isLoggedIn}=useAuth()
+  const revievSubmitHandler =()=>{
+    isLoggedIn? "": "/authentication/login"
+  }
   return (
     <>
       <div className="tp-product-details-bottom pb-140">
@@ -235,7 +240,7 @@ const Reviews = () => {
                             </div>
                           </div>
                           <div className="tp-product-details-review-btn-wrapper">
-                            <button className="tp-product-details-review-btn">
+                            <button className="tp-product-details-review-btn" onClick={revievSubmitHandler}>
                               Submit
                             </button>
                           </div>

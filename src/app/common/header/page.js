@@ -86,11 +86,12 @@ export default function Header() {
           "Content-Type": "application/json",
         },
       });
-      console.log('req',req)
+      console.log("req", req);
     } catch (error) {
       console.log("error", error);
     }
   };
+  console.log("filteredProducts", filteredProducts);
 
   return (
     <>
@@ -110,9 +111,7 @@ export default function Header() {
             <div className="col">
               <div className="tp-mobile-item text-center">
                 <Link href="/" prefetch={true}>
-                  <button
-                    className={`tp-mobile-item-btn`}
-                  >
+                  <button className={`tp-mobile-item-btn`}>
                     <MdHome />
                     <span>Home</span>
                   </button>
@@ -156,7 +155,11 @@ export default function Header() {
                 >
                   <button className={`tp-mobile-item-btn`}>
                     <BsHandbag />
-                    <span className={`tp-header-action-badge mobilecart ${cartBounce ? "bounce" : ""}`}>
+                    <span
+                      className={`tp-header-action-badge mobilecart ${
+                        cartBounce ? "bounce" : ""
+                      }`}
+                    >
                       {isLoggedIn ? cartItems.length : 0}
                     </span>
                     <span>Cart</span>
@@ -226,6 +229,43 @@ export default function Header() {
                               <FaSearch />
                             </button>
                           </div>
+                          {/* <div className="filtered-products">
+                            {filteredProducts.length > 0 ? (
+                              filteredProducts.map((product) => (
+                                <div
+                                  key={product.productId}
+                                  className="product-card"
+                                >
+                                  <h3>{product.productName}</h3>
+                                  <p>{product.productDescription}</p>
+                                  <div className="product-images">
+                                    {product.productItems[0].images.map(
+                                      (image) => (
+                                        <img
+                                          key={image.imageId}
+                                          src={image.url}
+                                          alt={product.productName}
+                                          className="product-image"
+                                        />
+                                      )
+                                    )}
+                                  </div>
+                                  <div className="product-price">
+                                    <p>
+                                      Original Price: $
+                                      {product.productItems[0].originalPrice}
+                                    </p>
+                                    <p>
+                                      Sale Price: $
+                                      {product.productItems[0].salePrice}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <p>No products found</p>
+                            )}
+                          </div> */}
                         </form>
                       </div>
 
@@ -239,7 +279,9 @@ export default function Header() {
                             <button className="tp-header-action-btn">
                               <FaRegHeart />
                               <span
-                                className={`tp-header-action-badge ${wishlistBounce ? "bounce" : ""}`}
+                                className={`tp-header-action-badge ${
+                                  wishlistBounce ? "bounce" : ""
+                                }`}
                               >
                                 {wishListItems.length}
                               </span>
@@ -255,7 +297,9 @@ export default function Header() {
                             <button className="tp-header-action-btn cartmini-open-btn">
                               <BsHandbag />
                               <span
-                                className={`tp-header-action-badge ${cartBounce ? "bounce" : ""}`}
+                                className={`tp-header-action-badge ${
+                                  cartBounce ? "bounce" : ""
+                                }`}
                               >
                                 {cartItems.length}
                               </span>
@@ -264,17 +308,19 @@ export default function Header() {
                         </div>
                         <div className="tp-header-action-item d-none d-lg-block">
                           <Link
-                            href={isLoggedIn ? "/profile" : "/authentication/login"}
+                            href={
+                              isLoggedIn ? "/profile" : "/authentication/login"
+                            }
                           >
                             <button className="tp-header-action-btn">
                               <FaUser />
                             </button>
                           </Link>
                         </div>
-                      
-<div className="tp-header-action-item d-block d-xl-none">
-<MobileMenus />
-</div>
+
+                        <div className="tp-header-action-item d-block d-xl-none">
+                          <MobileMenus />
+                        </div>
                       </div>
                     </div>
                   </div>
